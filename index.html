@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulgarian Vengence</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="title-screen">
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>Vulgarian Vengence</h1>
+        </div>
+        <div class="buttons">
+            <button id="button1" onclick="showShopPopup()">Shop</button>
+            <button id="button2" onclick="showCharacterPopup()">Characters</button>
+            <button id="button3" class="middle" onclick="startGame()">Start Game</button>
+            <button id="button4" onclick="showCraftingPopup()">Crafting</button>
+            <button id="button5" onclick="button5Action()">Button 5</button>
+        </div>
+    </div>
+
+    <div id="shopPopup" class="popup">
+        <div class="popup-content">
+            <span id="closeShopPopup" class="close" onclick="hideShopPopup()">&times;</span>
+            <div class="shop-items">
+            </div>
+        </div>
+    </div>
+
+    <div id="characterPopup" class="popup">
+        <div class="popup-content">
+            <span id="closeCharacterPopup" class="close" onclick="hideCharacterPopup()">&times;</span>
+            <div class="character-items">
+            </div>
+        </div>
+    </div>
+
+    <div id="craftingPopup" class="popup">
+        <div class="popup-content">
+            <span id="closeCraftingPopup" class="close" onclick="hideCraftingPopup()">&times;</span>
+            <div class="crafting-items">
+            </div>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>

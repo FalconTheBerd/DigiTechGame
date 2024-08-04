@@ -1,0 +1,123 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+#game-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-color: gray;
+}
+
+#player {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.thermalShield {
+    width: 1200px;
+    height: 120px;
+    background-color: rgba(255, 255, 0, 0.5);
+    border: 2px solid rgba(255, 255, 0, 0.8);
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+    border-radius: 50%;
+    top: calc(50% - 60px);
+    left: calc(50% - 60px);
+}
+
+.tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    display: none;
+}
+
+
+.enemy {
+    width: 50px;
+    height: 50px;
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+}
+
+#ability-ui {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.ability {
+    width: 50px;
+    height: 50px;
+    position: relative;
+}
+
+.ability img {
+    width: 100%;
+    height: 100%;
+}
+
+.cooldown {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.flame,
+.fireball,
+.flameWave {
+    position: absolute;
+    background-color: orange;
+    border: 2px solid rgba(255, 255, 0, 0.8);
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+    border-radius: 50%;
+}
+
+.flame {
+    width: 10px;
+    height: 10px;
+}
+
+.fireball {
+    width: 20px;
+    height: 20px;
+}
+
+.flameWave {
+    width: 50px;
+    height: 50px;
+    transform: rotate(45deg);
+}
