@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     const keysPressed = {};
 
+    // Initialize inventory from local storage or create an empty one
+    let inventory = JSON.parse(localStorage.getItem('inventory')) || {};
+
     const abilities = {
         Ember: {
             flameBarrage: {
@@ -189,11 +192,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
+    
     function flameBarrage(event) {
         const playerRect = player.getBoundingClientRect();
         const playerCenterX = playerRect.left + playerRect.width / 2;
         const playerCenterY = playerRect.top + playerRect.height / 2;
-
+    
         for (let i = 0; i < 5; i++) {
             const flame = document.createElement('div');
             flame.className = 'flame';
@@ -201,85 +205,111 @@ document.addEventListener('DOMContentLoaded', (event) => {
             flame.style.top = `${playerCenterY}px`;
             flame.style.left = `${playerCenterX}px`;
             document.body.appendChild(flame);
-
+    
             const speed = 5;
             const deltaY = mouseY - playerCenterY;
             const deltaX = mouseX - playerCenterX;
-
+    
             const offsetAngle = Math.atan2(deltaY, deltaX) + (Math.random() - 0.5) * 0.2;
-
+    
             function moveFlame() {
                 let flameTop = parseFloat(flame.style.top);
                 let flameLeft = parseFloat(flame.style.left);
-
+    
                 flameTop += speed * Math.sin(offsetAngle);
                 flameLeft += speed * Math.cos(offsetAngle);
-
+    
                 flame.style.top = `${flameTop}px`;
                 flame.style.left = `${flameLeft}px`;
-
+    
                 // Check for collision with enemies
                 document.querySelectorAll('.enemy').forEach(enemy => {
                     const enemyRect = enemy.getBoundingClientRect();
                     if (flameTop >= enemyRect.top && flameTop <= enemyRect.bottom &&
                         flameLeft >= enemyRect.left && flameLeft <= enemyRect.right) {
                         enemy.remove();
+                        dropItem(enemy);
                         flame.remove();
+                        return; // Stop further checks after hitting an enemy
                     }
                 });
-
+    
+                // Check for collision with bosses
+                document.querySelectorAll('.boss').forEach(boss => {
+                    const bossRect = boss.getBoundingClientRect();
+                    if (flameTop >= bossRect.top && flameTop <= bossRect.bottom &&
+                        flameLeft >= bossRect.left && flameLeft <= bossRect.right) {
+                        boss.takeDamage(20); // Adjust the damage as needed
+                        flame.remove();
+                        return; // Stop further checks after hitting the boss
+                    }
+                });
+    
                 if (flameTop < 0 || flameTop > window.innerHeight || flameLeft < 0 || flameLeft > window.innerWidth) {
                     flame.remove();
                 } else {
                     requestAnimationFrame(moveFlame);
                 }
             }
-
+    
             requestAnimationFrame(moveFlame);
         }
     }
-
+    
     function fireball(event) {
         const playerRect = player.getBoundingClientRect();
         const playerCenterX = playerRect.left + playerRect.width / 2;
         const playerCenterY = playerRect.top + playerRect.height / 2;
-
+    
         const angle = Math.atan2(mouseY - playerCenterY, mouseX - playerCenterX);
-
+    
         const fireball = document.createElement('div');
         fireball.className = 'fireball';
         fireball.style.top = `${playerCenterY}px`;
         fireball.style.left = `${playerCenterX}px`;
         document.body.appendChild(fireball);
-
+    
         const speed = 10;
-
+    
         function moveFireball() {
             const fireballTop = parseInt(fireball.style.top);
             const fireballLeft = parseInt(fireball.style.left);
             fireball.style.top = `${fireballTop + speed * Math.sin(angle)}px`;
             fireball.style.left = `${fireballLeft + speed * Math.cos(angle)}px`;
-
+    
             // Check for collision with enemies
             document.querySelectorAll('.enemy').forEach(enemy => {
                 const enemyRect = enemy.getBoundingClientRect();
                 if (fireballTop >= enemyRect.top && fireballTop <= enemyRect.bottom &&
                     fireballLeft >= enemyRect.left && fireballLeft <= enemyRect.right) {
                     enemy.remove();
+                    dropItem(enemy);
                     fireball.remove();
+                    return; // Stop further checks after hitting an enemy
                 }
             });
-
+    
+            // Check for collision with bosses
+            document.querySelectorAll('.boss').forEach(boss => {
+                const bossRect = boss.getBoundingClientRect();
+                if (fireballTop >= bossRect.top && fireballTop <= bossRect.bottom &&
+                    fireballLeft >= bossRect.left && fireballLeft <= bossRect.right) {
+                    boss.takeDamage(30); // Adjust the damage as needed
+                    fireball.remove();
+                    return; // Stop further checks after hitting the boss
+                }
+            });
+    
             if (fireballTop < 0 || fireballTop > window.innerHeight || fireballLeft < 0 || fireballLeft > window.innerWidth) {
                 fireball.remove();
             } else {
                 requestAnimationFrame(moveFireball);
             }
         }
-
+    
         requestAnimationFrame(moveFireball);
     }
-
+    
     function thermalShield() {
         let shield = document.querySelector('.thermalShield');
         if (!shield) {
@@ -287,10 +317,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
             shield.className = 'thermalShield';
             player.appendChild(shield);
         }
-
+    
         // Shield blocks bullets for 4 seconds
         shield.dataset.active = 'true';
-
+    
         setTimeout(() => {
             if (shield) {
                 shield.dataset.active = 'false';
@@ -298,58 +328,75 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         }, 4000);
     }
-
+    
     function flameWave(event) {
         const playerRect = player.getBoundingClientRect();
         const playerCenterX = playerRect.left + playerRect.width / 2;
         const playerCenterY = playerRect.top + playerRect.height / 2;
-
+    
         const angle = Math.atan2(mouseY - playerCenterY, mouseX - playerCenterX);
-
+    
         for (let i = 0; i < 5; i++) {
             const wave = document.createElement('div');
             wave.className = 'flameWave';
             wave.style.top = `${playerCenterY}px`;
             wave.style.left = `${playerCenterX}px`;
             document.body.appendChild(wave);
-
+    
             const speed = 3;
             const delay = i * 100; // delay each wave
-
+    
             setTimeout(() => {
                 function moveWave() {
                     const waveTop = parseInt(wave.style.top);
                     const waveLeft = parseInt(wave.style.left);
                     wave.style.top = `${waveTop + speed * Math.sin(angle)}px`;
                     wave.style.left = `${waveLeft + speed * Math.cos(angle)}px`;
-
+    
                     // Check for collision with enemies
                     document.querySelectorAll('.enemy').forEach(enemy => {
                         const enemyRect = enemy.getBoundingClientRect();
                         if (waveTop >= enemyRect.top && waveTop <= enemyRect.bottom &&
                             waveLeft >= enemyRect.left && waveLeft <= enemyRect.right) {
                             enemy.remove();
+                            dropItem(enemy);
                             wave.remove();
+                            return; // Stop further checks after hitting an enemy
                         }
                     });
-
+    
+                    // Check for collision with bosses
+                    document.querySelectorAll('.boss').forEach(boss => {
+                        const bossRect = boss.getBoundingClientRect();
+                        if (waveTop >= bossRect.top && waveTop <= bossRect.bottom &&
+                            waveLeft >= bossRect.left && waveLeft <= bossRect.right) {
+                            boss.takeDamage(25); // Adjust the damage as needed
+                            wave.remove();
+                            return; // Stop further checks after hitting the boss
+                        }
+                    });
+    
                     if (waveTop < 0 || waveTop > window.innerHeight || waveLeft < 0 || waveLeft > window.innerWidth) {
                         wave.remove();
                     } else {
                         requestAnimationFrame(moveWave);
                     }
                 }
-
+    
                 moveWave();
             }, delay);
         }
     }
+    
+    
+    
 
     function createEnemy(type, top, left) {
         const enemy = document.createElement('div');
         enemy.className = 'enemy';
         enemy.style.top = `${top}px`;
         enemy.style.left = `${left}px`;
+        enemy.dataset.type = type; // Store enemy type in dataset for drops
         document.body.appendChild(enemy);
 
         const speed = 2;
@@ -416,7 +463,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 const playerRect = player.getBoundingClientRect();
                 if (bulletTop >= playerRect.top && bulletTop <= playerRect.bottom &&
                     bulletLeft >= playerRect.left && bulletLeft <= playerRect.right) {
-                    decreasePlayerHealth(10);
+                    decreasePlayerHealth(bulletDamage);
                     bullet.remove();
                     return;
                 }
@@ -435,6 +482,43 @@ document.addEventListener('DOMContentLoaded', (event) => {
         setInterval(shootPlayer, 3000); // Enemies shoot every 3 seconds
     }
 
+    function dropItem(enemy) {
+        const itemTypes = ['Gold']; // Example item types
+        const randomItem = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+    
+        if (!inventory[randomItem]) {
+            inventory[randomItem] = 0;
+        }
+        
+        if (Math.round(Math.random()) !== 1){
+        inventory[randomItem]++;
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+    
+        console.log(`Dropped ${randomItem}. Total: ${inventory[randomItem]}`);
+    
+        showItemPopup(randomItem);
+    }
+    }
+    
+    function showItemPopup(item) {
+        const popup = document.createElement('div');
+        popup.className = 'item-popup';
+        popup.textContent = `You got: ${item}`;
+        
+        document.body.appendChild(popup);
+    
+        // Show the popup
+        setTimeout(() => {
+            popup.classList.add('show');
+        }, 10);
+    
+        // Hide the popup after 2 seconds
+        setTimeout(() => {
+            popup.classList.remove('show');
+            popup.remove();
+        }, 2000);
+    }
+
     function spawnWave(enemyCount) {
         for (let i = 0; i < enemyCount; i++) {
             const top = Math.random() * (window.innerHeight - 50);
@@ -443,13 +527,137 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
-    // Spawn initial wave
-    spawnWave(10);
+    function createBoss() {
+        const top = Math.random() * (window.innerHeight - 150);
+        const left = Math.random() * (window.innerWidth - 150);
+        const boss = document.createElement('div');
+        boss.className = 'boss';
+        boss.style.position = 'absolute';
+        boss.style.top = `${top}px`;
+        boss.style.left = `${left}px`;
+        boss.style.width = '100px'; // Boss size to make it visible
+        boss.style.height = '100px';
+        boss.style.backgroundColor = 'red'; // Make the boss visible
+        document.body.appendChild(boss);
+    
+        boss.health = 100; // Set boss health
+    
+        const bossSpeed = 2;
+    
+        function moveBoss() {
+            if (!document.body.contains(boss)) return; // Stop movement if the boss is removed
+    
+            let bossTop = parseFloat(boss.style.top);
+            let bossLeft = parseFloat(boss.style.left);
+    
+            // Move towards the player
+            const playerRect = player.getBoundingClientRect();
+            const angle = Math.atan2(playerRect.top - bossTop, playerRect.left - bossLeft);
+    
+            bossTop += bossSpeed * Math.sin(angle);
+            bossLeft += bossSpeed * Math.cos(angle);
+    
+            boss.style.top = `${bossTop}px`;
+            boss.style.left = `${bossLeft}px`;
+    
+            requestAnimationFrame(moveBoss);
+        }
+    
+        function shootPlayer() {
+            if (!document.body.contains(boss)) return; // Stop shooting if the boss is removed
+    
+            const playerRect = player.getBoundingClientRect();
+            const bossRect = boss.getBoundingClientRect();
+            const angle = Math.atan2(playerRect.top - bossRect.top, playerRect.left - bossRect.left);
+    
+            const bullet = document.createElement('div');
+            bullet.className = 'bullet';
+            bullet.style.position = 'absolute';
+            bullet.style.top = `${bossRect.top + bossRect.height / 2}px`;
+            bullet.style.left = `${bossRect.left + bossRect.width / 2}px`;
+            bullet.style.width = '10px';
+            bullet.style.height = '10px';
+            bullet.style.backgroundColor = 'yellow'; // Visible bullet color
+            bullet.style.borderRadius = '50%'; // Make it look more like a bullet
+            document.body.appendChild(bullet);
+    
+            const bulletSpeed = 4;
+            const bulletDamage = 20; // Increased damage for boss bullets
+    
+            function moveBullet() {
+                let bulletTop = parseFloat(bullet.style.top);
+                let bulletLeft = parseFloat(bullet.style.left);
+    
+                bulletTop += bulletSpeed * Math.sin(angle);
+                bulletLeft += bulletSpeed * Math.cos(angle);
+    
+                bullet.style.top = `${bulletTop}px`;
+                bullet.style.left = `${bulletLeft}px`;
+    
+                // Check for collision with player
+                if (bulletTop >= playerRect.top && bulletTop <= playerRect.bottom &&
+                    bulletLeft >= playerRect.left && bulletLeft <= playerRect.right) {
+                    decreasePlayerHealth(bulletDamage);
+                    bullet.remove();
+                    return;
+                }
+    
+                if (bulletTop < 0 || bulletTop > window.innerHeight || bulletLeft < 0 || bulletLeft > window.innerWidth) {
+                    bullet.remove();
+                } else {
+                    requestAnimationFrame(moveBullet);
+                }
+            }
+    
+            requestAnimationFrame(moveBullet);
+        }
+    
+        moveBoss(); // Start boss movement immediately
+        setInterval(shootPlayer, 2000); // Boss shoots every 2 seconds
+    
+        boss.takeDamage = function (damage) {
+            boss.health -= damage;
+            if (boss.health <= 0) {
+                console.log("Boss defeated!");
+                boss.remove();
+            }
+        };
+    }
+    
+    
+    
 
-    // Spawn additional waves every 30 seconds
-    setInterval(() => {
-        spawnWave(10);
-    }, 30000);
+    function startGame() {
+        let wave = 1;
+    
+        function nextWave() {
+            if (wave <= 2) {
+                const enemyCount = wave; // Adjusted number of enemies for each wave
+                spawnWave(enemyCount); // Spawn the correct number of enemies
+                wave++;
+            } else if (wave === 3) {
+                createBoss(); // Spawn boss after two waves
+            }
+        }
+    
+        // Start the first wave
+        nextWave();
+    
+        // Move to next wave or boss after the current wave is cleared
+        const waveCheckInterval = setInterval(() => {
+            const enemiesLeft = document.querySelectorAll('.enemy').length;
+            const bossExists = document.querySelectorAll('.boss').length > 0;
+    
+            if (enemiesLeft === 0 && !bossExists) {
+                if (wave <= 3) {
+                    nextWave();
+                } else {
+                    clearInterval(waveCheckInterval); // Stop checking after the boss wave
+                }
+            }
+        }, 1000); // Check every second if wave is cleared
+    }
+    
 
     // Function to update the health bar
     function updateHealthBar() {
@@ -481,4 +689,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     // Update the health bar initially
     updateHealthBar();
+
+    // Start the game with waves and boss
+    startGame();
 });
