@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     let mouseX, mouseY;
 
-    
+    // Capture the mouse position
     document.addEventListener('mousemove', (event) => {
         mouseX = event.clientX;
         mouseY = event.clientY;
@@ -9,8 +9,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     const player = document.getElementById('player');
     const moveAmount = 5;
-    let playerHealth = 100; 
-    let currentWave = 0;
+    let playerHealth = 100; // Initial health
 
     const keysPressed = {};
 
@@ -49,7 +48,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 }
             }
         },
-        
+        // Add other characters and their abilities here
     };
 
     const abilityUIElements = {
@@ -133,7 +132,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             horizontalMove += moveAmount;
         }
 
-        
+        // Normalize diagonal movement
         if (verticalMove !== 0 && horizontalMove !== 0) {
             verticalMove *= Math.sqrt(0.5);
             horizontalMove *= Math.sqrt(0.5);
@@ -219,7 +218,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 flame.style.top = `${flameTop}px`;
                 flame.style.left = `${flameLeft}px`;
 
-                
+                // Check for collision with enemies
                 document.querySelectorAll('.enemy').forEach(enemy => {
                     const enemyRect = enemy.getBoundingClientRect();
                     if (flameTop >= enemyRect.top && flameTop <= enemyRect.bottom &&
@@ -261,7 +260,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             fireball.style.top = `${fireballTop + speed * Math.sin(angle)}px`;
             fireball.style.left = `${fireballLeft + speed * Math.cos(angle)}px`;
 
-            
+            // Check for collision with enemies
             document.querySelectorAll('.enemy').forEach(enemy => {
                 const enemyRect = enemy.getBoundingClientRect();
                 if (fireballTop >= enemyRect.top && fireballTop <= enemyRect.bottom &&
@@ -289,7 +288,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             player.appendChild(shield);
         }
 
-        
+        // Shield blocks bullets for 4 seconds
         shield.dataset.active = 'true';
 
         setTimeout(() => {
@@ -315,7 +314,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             document.body.appendChild(wave);
 
             const speed = 3;
-            const delay = i * 100; 
+            const delay = i * 100; // delay each wave
 
             setTimeout(() => {
                 function moveWave() {
@@ -324,7 +323,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     wave.style.top = `${waveTop + speed * Math.sin(angle)}px`;
                     wave.style.left = `${waveLeft + speed * Math.cos(angle)}px`;
 
-                    
+                    // Check for collision with enemies
                     document.querySelectorAll('.enemy').forEach(enemy => {
                         const enemyRect = enemy.getBoundingClientRect();
                         if (waveTop >= enemyRect.top && waveTop <= enemyRect.bottom &&
@@ -358,16 +357,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
         let directionY = Math.random() < 0.5 ? 1 : -1;
 
         function moveEnemy() {
-            if (!document.body.contains(enemy)) return; 
+            if (!document.body.contains(enemy)) return; // Stop movement if the enemy is removed
 
             let enemyTop = parseFloat(enemy.style.top);
             let enemyLeft = parseFloat(enemy.style.left);
 
-            
-            enemyTop += directionY * speed; 
-            enemyLeft += directionX * speed; 
+            // Randomly move the enemy
+            enemyTop += directionY * speed; // move up or down
+            enemyLeft += directionX * speed; // move left or right
 
-            
+            // Check bounds and change direction if necessary
             if (enemyTop <= 0 || enemyTop >= window.innerHeight - enemy.clientHeight) {
                 directionY *= -1;
             }
@@ -382,7 +381,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
 
         function shootPlayer() {
-            if (!document.body.contains(enemy)) return; 
+            if (!document.body.contains(enemy)) return; // Stop shooting if the enemy is removed
 
             const playerRect = player.getBoundingClientRect();
             const playerCenterX = playerRect.left + playerRect.width / 2;
@@ -401,7 +400,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             document.body.appendChild(bullet);
 
             const bulletSpeed = 5;
-            const bulletDamage = 5; 
+            const bulletDamage = 5; // Reduced bullet damage
 
             function moveBullet() {
                 let bulletTop = parseFloat(bullet.style.top);
@@ -413,25 +412,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 bullet.style.top = `${bulletTop}px`;
                 bullet.style.left = `${bulletLeft}px`;
 
-                
-                const shield = document.querySelector('.thermalShield');
-                if (shield && shield.dataset.active === 'true') {
-                    const shieldRect = shield.getBoundingClientRect();
-                    if (bulletTop >= shieldRect.top && bulletTop <= shieldRect.bottom &&
-                        bulletLeft >= shieldRect.left && bulletLeft <= shieldRect.right) {
-                        bullet.remove();
-                        console.log('Bullet blocked by shield.');
-                        return;
-                    }
-                }
-
-                const bulletRect = bullet.getBoundingClientRect();
-
-                if (bulletRect.top >= playerRect.top && bulletRect.bottom <= playerRect.bottom &&
-                    bulletRect.left >= playerRect.left && bulletRect.right <= playerRect.right) {
-                    decreasePlayerHealth(bulletDamage);
+                // Check for collision with player
+                const playerRect = player.getBoundingClientRect();
+                if (bulletTop >= playerRect.top && bulletTop <= playerRect.bottom &&
+                    bulletLeft >= playerRect.left && bulletLeft <= playerRect.right) {
+                    decreasePlayerHealth(10);
                     bullet.remove();
-                    console.log('Bullet hit the player.');
                     return;
                 }
 
@@ -446,7 +432,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
 
         requestAnimationFrame(moveEnemy);
-        setInterval(shootPlayer, 3000); 
+        setInterval(shootPlayer, 3000); // Enemies shoot every 3 seconds
     }
 
     function spawnWave(enemyCount) {
@@ -457,157 +443,42 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
-    function spawnBoss() {
-        const boss = document.createElement('div');
-        boss.className = 'boss';
-        boss.style.top = '50px';
-        boss.style.left = '50px';
-        document.body.appendChild(boss);
+    // Spawn initial wave
+    spawnWave(10);
 
-        const bossSpeed = 2;
-        let bossHealth = 500; 
-        let directionX = Math.random() < 0.5 ? 1 : -1;
-        let directionY = Math.random() < 0.5 ? 1 : -1;
+    // Spawn additional waves every 30 seconds
+    setInterval(() => {
+        spawnWave(10);
+    }, 30000);
 
-        function moveBoss() {
-            if (!document.body.contains(boss)) return; 
-
-            let bossTop = parseFloat(boss.style.top);
-            let bossLeft = parseFloat(boss.style.left);
-
-            bossTop += directionY * bossSpeed; 
-            bossLeft += directionX * bossSpeed; 
-
-            
-            if (bossTop <= 0 || bossTop >= window.innerHeight - boss.clientHeight) {
-                directionY *= -1;
-            }
-            if (bossLeft <= 0 || bossLeft >= window.innerWidth - boss.clientWidth) {
-                directionX *= -1;
-            }
-
-            boss.style.top = `${bossTop}px`;
-            boss.style.left = `${bossLeft}px`;
-
-            requestAnimationFrame(moveBoss);
-        }
-
-        function shootPlayer() {
-            if (!document.body.contains(boss)) return; 
-
-            const playerRect = player.getBoundingClientRect();
-            const playerCenterX = playerRect.left + playerRect.width / 2;
-            const playerCenterY = playerRect.top + playerRect.height / 2;
-            const bossRect = boss.getBoundingClientRect();
-            const bossCenterX = bossRect.left + bossRect.width / 2;
-            const bossCenterY = bossRect.top + bossRect.height / 2;
-
-            const angle = Math.atan2(playerCenterY - bossCenterY, playerCenterX - bossCenterX);
-
-            const bullet = document.createElement('div');
-            bullet.className = 'bullet';
-            bullet.style.position = 'absolute';
-            bullet.style.top = `${bossCenterY}px`;
-            bullet.style.left = `${bossCenterX}px`;
-            document.body.appendChild(bullet);
-
-            const bulletSpeed = 5;
-            const bulletDamage = 20; 
-
-            function moveBullet() {
-                let bulletTop = parseFloat(bullet.style.top);
-                let bulletLeft = parseFloat(bullet.style.left);
-
-                bulletTop += bulletSpeed * Math.sin(angle);
-                bulletLeft += bulletSpeed * Math.cos(angle);
-
-                bullet.style.top = `${bulletTop}px`;
-                bullet.style.left = `${bulletLeft}px`;
-
-                
-                const shield = document.querySelector('.thermalShield');
-                if (shield && shield.dataset.active === 'true') {
-                    const shieldRect = shield.getBoundingClientRect();
-                    if (bulletTop >= shieldRect.top && bulletTop <= shieldRect.bottom &&
-                        bulletLeft >= shieldRect.left && bulletLeft <= shieldRect.right) {
-                        bullet.remove();
-                        console.log('Bullet blocked by shield.');
-                        return;
-                    }
-                }
-
-                const bulletRect = bullet.getBoundingClientRect();
-
-                if (bulletRect.top >= playerRect.top && bulletRect.bottom <= playerRect.bottom &&
-                    bulletRect.left >= playerRect.left && bulletRect.right <= playerRect.right) {
-                    decreasePlayerHealth(bulletDamage);
-                    bullet.remove();
-                    console.log('Boss bullet hit the player.');
-                    return;
-                }
-
-                if (bulletTop < 0 || bulletTop > window.innerHeight || bulletLeft < 0 || bulletLeft > window.innerWidth) {
-                    bullet.remove();
-                } else {
-                    requestAnimationFrame(moveBullet);
-                }
-            }
-
-            requestAnimationFrame(moveBullet);
-        }
-
-        requestAnimationFrame(moveBoss);
-        setInterval(shootPlayer, 2000); 
-    }
-
-    
-    function startDungeon() {
-        currentWave++;
-        if (currentWave === 1) {
-            spawnWave(10); 
-        } else if (currentWave === 2) {
-            spawnWave(15); 
-        } else if (currentWave === 3) {
-            spawnBoss(); 
-        }
-    }
-
-    
-    startDungeon();
-
-    
-    document.addEventListener('enemyCleared', () => {
-        startDungeon();
-    });
-
-    
+    // Function to update the health bar
     function updateHealthBar() {
         const healthBar = document.getElementById('health-bar');
         healthBar.style.width = `${playerHealth}%`;
 
         if (playerHealth > 60) {
-            healthBar.style.backgroundColor = '#4caf50'; 
+            healthBar.style.backgroundColor = '#4caf50'; // Green
         } else if (playerHealth > 30) {
-            healthBar.style.backgroundColor = '#ffeb3b'; 
+            healthBar.style.backgroundColor = '#ffeb3b'; // Yellow
         } else {
-            healthBar.style.backgroundColor = '#f44336'; 
+            healthBar.style.backgroundColor = '#f44336'; // Red
         }
     }
 
-    
+    // Example function to decrease player health
     function decreasePlayerHealth(amount) {
         playerHealth = Math.max(0, playerHealth - amount);
         updateHealthBar();
         console.log(`Player health decreased by ${amount}, current health: ${playerHealth}`);
         if (playerHealth === 0) {
             alert('Game Over');
-            
+            // Add logic to handle game over scenario
         }
     }
 
-    
+    // Start the animation loop
     requestAnimationFrame(movePlayer);
 
-    
+    // Update the health bar initially
     updateHealthBar();
 });
