@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     let mouseX, mouseY;
 
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+
     document.onkeydown = function(evt) {
         evt = evt || window.event;
         var isEscape = false;
@@ -10,7 +13,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
             isEscape = (evt.keyCode === 27);
         }
         if (isEscape) {
-            window.location.href = 'index.html'
+            if (isLocal) {
+                window.location.href = `index.html`;
+            } else {
+                window.location.href = `/DigiTechGame/index.html`;
+            }
         }
     };
 
@@ -470,9 +477,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
             tooltip.style.display = 'none';
         });
 
-        dungeonNode.addEventListener('click', () => {
-            window.location.href = `${page}.html`; 
+        dungeonNode.addEventListener('click', () => {        
+            if (isLocal) {
+                window.location.href = `${page}.html`;
+            } else {
+                window.location.href = `/DigiTechGame/${page}.html`;
+            }
         });
+        
 
         document.body.appendChild(dungeonNode);
     }

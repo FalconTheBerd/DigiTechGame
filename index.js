@@ -1,3 +1,5 @@
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
 const craftingRecipes = [
     {
         id: 1,
@@ -69,7 +71,11 @@ function hideCraftingPopup() {
 }
 
 function startGame() {
-    window.location.href = 'game.html';
+    if (isLocal) {
+        window.location.href = `game.html`;
+    } else {
+        window.location.href = `/DigiTechGame/game.html`;
+    }
 }
 
 function button5Action() {

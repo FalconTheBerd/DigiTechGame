@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', (event) => {
+
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
     let mouseX, mouseY;
 
     function sleep(ms) {
@@ -135,7 +138,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (keysPressed['ARROWLEFT'] || keysPressed['A']) {
             horizontalMove -= moveAmount;
         }
-        if (keysPressed['ARROWRIGHT'] || keysPressed['D']){
+        if (keysPressed['ARROWRIGHT'] || keysPressed['D']) {
             horizontalMove += moveAmount;
         }
 
@@ -196,12 +199,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
-    
+
     function flameBarrage(event) {
         const playerRect = player.getBoundingClientRect();
         const playerCenterX = playerRect.left + playerRect.width / 2;
         const playerCenterY = playerRect.top + playerRect.height / 2;
-    
+
         for (let i = 0; i < 5; i++) {
             const flame = document.createElement('div');
             flame.className = 'flame';
@@ -209,23 +212,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
             flame.style.top = `${playerCenterY}px`;
             flame.style.left = `${playerCenterX}px`;
             document.body.appendChild(flame);
-    
+
             const speed = 5;
             const deltaY = mouseY - playerCenterY;
             const deltaX = mouseX - playerCenterX;
-    
+
             const offsetAngle = Math.atan2(deltaY, deltaX) + (Math.random() - 0.5) * 0.2;
-    
+
             function moveFlame() {
                 let flameTop = parseFloat(flame.style.top);
                 let flameLeft = parseFloat(flame.style.left);
-    
+
                 flameTop += speed * Math.sin(offsetAngle);
                 flameLeft += speed * Math.cos(offsetAngle);
-    
+
                 flame.style.top = `${flameTop}px`;
                 flame.style.left = `${flameLeft}px`;
-    
+
                 // Check for collision with enemies
                 let hit = false;
                 document.querySelectorAll('.enemy').forEach(enemy => {
@@ -240,7 +243,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         }
                     }
                 });
-    
+
                 // Check for collision with bosses
                 if (!hit) {
                     document.querySelectorAll('.boss').forEach(boss => {
@@ -255,42 +258,42 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         }
                     });
                 }
-    
+
                 if (!hit && (flameTop < 0 || flameTop > window.innerHeight || flameLeft < 0 || flameLeft > window.innerWidth)) {
                     flame.remove();
                 } else if (!hit) {
                     requestAnimationFrame(moveFlame);
                 }
             }
-    
+
             requestAnimationFrame(moveFlame);
         }
     }
-    
+
     function fireball(event) {
         const playerRect = player.getBoundingClientRect();
         const playerCenterX = playerRect.left + playerRect.width / 2;
         const playerCenterY = playerRect.top + playerRect.height / 2;
-    
+
         const angle = Math.atan2(mouseY - playerCenterY, mouseX - playerCenterX);
-    
+
         const fireball = document.createElement('div');
         fireball.className = 'fireball';
         fireball.style.position = 'absolute';
         fireball.style.top = `${playerCenterY}px`;
         fireball.style.left = `${playerCenterX}px`;
         document.body.appendChild(fireball);
-    
+
         const speed = 10;
-    
+
         function moveFireball() {
             const fireballTop = parseInt(fireball.style.top);
             const fireballLeft = parseInt(fireball.style.left);
             fireball.style.top = `${fireballTop + speed * Math.sin(angle)}px`;
             fireball.style.left = `${fireballLeft + speed * Math.cos(angle)}px`;
-    
+
             let hit = false;  // Track whether the fireball has hit something
-    
+
             // Check for collision with the boss
             document.querySelectorAll('.boss').forEach(boss => {
                 if (hit) return;  // Exit if already hit
@@ -302,7 +305,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     hit = true;  // Mark as hit to prevent further processing
                 }
             });
-    
+
             // Check for collision with enemies
             if (!hit) {  // Only check if it hasn't already hit the boss
                 document.querySelectorAll('.enemy').forEach(enemy => {
@@ -317,7 +320,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     }
                 });
             }
-    
+
             if (!hit) {  // Only continue moving if it hasn't hit anything
                 if (fireballTop < 0 || fireballTop > window.innerHeight || fireballLeft < 0 || fireballLeft > window.innerWidth) {
                     fireball.remove();  // Remove fireball if it leaves the screen
@@ -326,12 +329,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 }
             }
         }
-    
+
         requestAnimationFrame(moveFireball);
     }
-    
-    
-    
+
+
+
     function thermalShield() {
         let shield = document.querySelector('.thermalShield');
         if (!shield) {
@@ -339,10 +342,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
             shield.className = 'thermalShield';
             player.appendChild(shield);
         }
-    
+
         // Shield blocks bullets for 4 seconds
         shield.dataset.active = 'true';
-    
+
         setTimeout(() => {
             if (shield) {
                 shield.dataset.active = 'false';
@@ -350,35 +353,35 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         }, 4000);
     }
-    
+
     function flameWave(event) {
         const playerRect = player.getBoundingClientRect();
         const playerCenterX = playerRect.left + playerRect.width / 2;
         const playerCenterY = playerRect.top + playerRect.height / 2;
-    
+
         const angle = Math.atan2(mouseY - playerCenterY, mouseX - playerCenterX);
-    
+
         for (let i = 0; i < 5; i++) {
             const wave = document.createElement('div');
             wave.className = 'flameWave';
             wave.style.top = `${playerCenterY}px`;
             wave.style.left = `${playerCenterX}px`;
             document.body.appendChild(wave);
-    
+
             const speed = 3;
             const delay = i * 100; // Delay each wave
-    
+
             setTimeout(() => {
                 let hit = false; // Track if the wave has hit anything
-    
+
                 function moveWave() {
                     if (hit) return; // Stop if the wave has already hit something
-    
+
                     const waveTop = parseInt(wave.style.top);
                     const waveLeft = parseInt(wave.style.left);
                     wave.style.top = `${waveTop + speed * Math.sin(angle)}px`;
                     wave.style.left = `${waveLeft + speed * Math.cos(angle)}px`;
-    
+
                     // Check for collision with enemies
                     document.querySelectorAll('.enemy').forEach(enemy => {
                         if (!hit) {
@@ -392,7 +395,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                             }
                         }
                     });
-    
+
                     // Check for collision with bosses
                     if (!hit) {
                         document.querySelectorAll('.boss').forEach(boss => {
@@ -407,7 +410,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                             }
                         });
                     }
-    
+
                     if (!hit && (waveTop < 0 || waveTop > window.innerHeight || waveLeft < 0 || waveLeft > window.innerWidth)) {
                         wave.remove();
                         hit = true; // Mark as hit if it leaves the screen
@@ -415,15 +418,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         requestAnimationFrame(moveWave);
                     }
                 }
-    
+
                 moveWave();
             }, delay);
         }
     }
-    
-    
-    
-    
+
+
+
+
 
     function createEnemy(type, top, left) {
         const enemy = document.createElement('div');
@@ -521,33 +524,33 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function dropItem(enemy) {
         const itemTypes = ['Gold', 'Ice Heart', 'Temperature Stabiliser', 'Exo Suit Part']; // Example item types
         const weights = [50, 20, 15, 15]; // Weights corresponding to the item types
-    
+
         const randomItem = weightedRandom(itemTypes, weights);
-    
+
         if (!inventory[randomItem]) {
             inventory[randomItem] = 0;
         }
-    
-            let amount = 1;
-    
-            if (randomItem === 'Gold') {
-                amount = Math.floor(Math.random() * 10) + 1;
-                inventory[randomItem] += amount;
-                console.log(`Dropped ${amount} ${randomItem}. Total: ${inventory[randomItem]}`);
-            } else {
-                inventory[randomItem]++;
-                console.log(`Dropped ${randomItem}. Total: ${inventory[randomItem]}`);
-            }
-    
-            localStorage.setItem('inventory', JSON.stringify(inventory));
-            showItemPopup(randomItem, amount);
-        
+
+        let amount = 1;
+
+        if (randomItem === 'Gold') {
+            amount = Math.floor(Math.random() * 10) + 1;
+            inventory[randomItem] += amount;
+            console.log(`Dropped ${amount} ${randomItem}. Total: ${inventory[randomItem]}`);
+        } else {
+            inventory[randomItem]++;
+            console.log(`Dropped ${randomItem}. Total: ${inventory[randomItem]}`);
+        }
+
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+        showItemPopup(randomItem, amount);
+
     }
-    
+
     function weightedRandom(items, weights) {
         const totalWeight = weights.reduce((acc, weight) => acc + weight, 0);
         const randomValue = Math.random() * totalWeight;
-    
+
         let cumulativeWeight = 0;
         for (let i = 0; i < items.length; i++) {
             cumulativeWeight += weights[i];
@@ -555,8 +558,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 return items[i];
             }
         }
-    }    
-    
+    }
+
     function showItemPopup(item, amount = 1) {
         // Create or select the popup container
         let popupContainer = document.getElementById('popupContainer');
@@ -570,7 +573,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             popupContainer.style.zIndex = '1000';
             document.body.appendChild(popupContainer);
         }
-    
+
         // Create a new popup item
         const popup = document.createElement('div');
         popup.className = 'item-popup';
@@ -580,22 +583,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
         popup.style.padding = '10px';
         popup.style.borderRadius = '5px';
         popup.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
-        
+
         // Set the popup text based on the item
         if (item === 'Gold') {
             popup.textContent = `You got: ${amount} Gold`;
         } else {
             popup.textContent = `You got: ${item}`;
         }
-    
+
         // Append the popup to the container
         popupContainer.appendChild(popup);
-    
+
         // Show the popup
         setTimeout(() => {
             popup.classList.add('show');
         }, 10);
-    
+
         // Hide the popup after 2 seconds
         setTimeout(() => {
             popup.remove();
@@ -605,8 +608,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         }, 2000);
     }
-    
-    
+
+
 
     function spawnWave(enemyCount) {
         for (let i = 0; i < enemyCount; i++) {
@@ -628,7 +631,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         boss.style.height = '100px';
         boss.style.backgroundImage = 'url("https://lh3.googleusercontent.com/d/1uM2rvMfFQ0v7GnvAqj00M-f9QzxHiK1S")'; // Correct URL format
         boss.style.backgroundSize = 'cover'; // Ensures the image covers the div
-    
+
         // Create the health bar container and health bar (same as before)
         const healthBarContainer = document.createElement('div');
         const healthBar = document.createElement('div');
@@ -646,36 +649,36 @@ document.addEventListener('DOMContentLoaded', (event) => {
         healthBarContainer.appendChild(healthBar);
         boss.appendChild(healthBarContainer);
         document.body.appendChild(boss);
-    
+
         boss.health = 200;
-    
+
         const bossSpeed = 2;
-    
+
         function moveBoss() {
             if (!document.body.contains(boss)) return;
-    
+
             let bossTop = parseFloat(boss.style.top);
             let bossLeft = parseFloat(boss.style.left);
-    
+
             const playerRect = player.getBoundingClientRect();
             const angle = Math.atan2(playerRect.top - bossTop, playerRect.left - bossLeft);
-    
+
             bossTop += bossSpeed * Math.sin(angle);
             bossLeft += bossSpeed * Math.cos(angle);
-    
+
             boss.style.top = `${bossTop}px`;
             boss.style.left = `${bossLeft}px`;
-    
+
             requestAnimationFrame(moveBoss);
         }
-    
+
         function shootPlayer() {
             if (!document.body.contains(boss)) return;
-    
+
             const playerRect = player.getBoundingClientRect();
             const bossRect = boss.getBoundingClientRect();
             const angle = Math.atan2(playerRect.top - bossRect.top, playerRect.left - bossRect.left);
-    
+
             const bullet = document.createElement('div');
             bullet.className = 'bullet';
             bullet.style.position = 'absolute';
@@ -686,22 +689,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
             bullet.style.backgroundColor = 'yellow';
             bullet.style.borderRadius = '50%';
             document.body.appendChild(bullet);
-    
+
             const bulletSpeed = 7;
             const bulletDamage = 20;
-    
+
             function moveBullet() {
                 if (!document.body.contains(bullet)) return;  // Stop movement if the bullet is removed
-    
+
                 let bulletTop = parseFloat(bullet.style.top);
                 let bulletLeft = parseFloat(bullet.style.left);
-    
+
                 bulletTop += bulletSpeed * Math.sin(angle);
                 bulletLeft += bulletSpeed * Math.cos(angle);
-    
+
                 bullet.style.top = `${bulletTop}px`;
                 bullet.style.left = `${bulletLeft}px`;
-    
+
                 // Check for collision with player
                 const playerRect = player.getBoundingClientRect();
                 if (bulletTop >= playerRect.top && bulletTop <= playerRect.bottom &&
@@ -710,7 +713,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     bullet.remove();  // Remove bullet immediately after it hits the player
                     return;
                 }
-    
+
                 // Remove bullet if it leaves the screen
                 if (bulletTop < 0 || bulletTop > window.innerHeight || bulletLeft < 0 || bulletLeft > window.innerWidth) {
                     bullet.remove();
@@ -718,27 +721,37 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     requestAnimationFrame(moveBullet);
                 }
             }
-    
+
             requestAnimationFrame(moveBullet);
         }
-    
+
         boss.takeDamage = function (damage) {
             boss.health -= damage;
+
             if (boss.health <= 0) {
                 boss.remove();
                 dropItem(boss);
                 dropItem(boss);
                 dropItem(boss);
-                sleep(2000).then(() => { window.location.href = 'game.html'; });
+
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                const redirectPath = isLocal ? 'game.html' : '/reponame/game.html';
+
+                sleep(5000).then(() => {
+                    window.location.href = redirectPath;
+                });
 
             } else {
                 const healthPercentage = (boss.health / 200) * 100;
                 healthBar.style.width = `${healthPercentage}%`;
-                healthBar.style.backgroundColor = healthPercentage > 60 ? '#4caf50' : healthPercentage > 30 ? '#ffeb3b' : '#f44336';
-                console.log(`boss took ${damage}, health is now ${boss.health}`);
+                healthBar.style.backgroundColor = healthPercentage > 60 ? '#4caf50' :
+                    healthPercentage > 30 ? '#ffeb3b' :
+                        '#f44336';
+                console.log(`boss took ${damage} damage, health is now ${boss.health}`);
             }
         };
-    
+
+
         moveBoss();
         setInterval(shootPlayer, 2000);  // Boss shoots every 2 seconds
     }
@@ -747,7 +760,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function startGame() {
         let wave = 1;
         let bossCreated = false; // Track if the boss has been created
-    
+
         function nextWave() {
             if (wave <= 2) {
                 const enemyCount = 1; // Adjust the number of enemies for each wave
@@ -758,15 +771,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 bossCreated = true; // Mark the boss as created
             }
         }
-    
+
         // Start the first wave
         nextWave();
-    
+
         // Move to next wave or boss after the current wave is cleared
         const waveCheckInterval = setInterval(() => {
             const enemiesLeft = document.querySelectorAll('.enemy').length;
             const bossExists = document.querySelectorAll('.boss').length > 0;
-    
+
             if (enemiesLeft === 0 && !bossExists) {
                 if (wave <= 3) {
                     nextWave();
@@ -776,10 +789,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         }, 1000); // Check every second if the wave is cleared
     }
-    
-    
 
-    
+
+
+
 
     // Function to update the health bar
     function updateHealthBar() {
