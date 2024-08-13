@@ -1,17 +1,17 @@
 const craftingRecipes = [
     {
         id: 1,
-        character: { name: 'Ember', image: 'placeholder.png' },
+        character: { name: 'Frostbite', image: 'placeholder.png' },
         materials: [
-            { name: 'Wood', required: 10 },
-            { name: 'Stone', required: 5 },
-            { name: 'Iron', required: 2 },
-            { name: 'Gold', required: 1 }
+            { name: 'Gold', required: 50 },
+            { name: 'Ice Heart', required: 1 },
+            { name: 'Exo Suit Part', required: 5 },
+            { name: 'Temperature Stabiliser', required: 1 }
         ]
     },
     {
         id: 2,
-        character: { name: 'Frostbite', image: 'placeholder.png' },
+        character: { name: 'Spark', image: 'placeholder.png' },
         materials: [
             { name: 'Wood', required: 8 },
             { name: 'Stone', required: 7 },
@@ -19,36 +19,21 @@ const craftingRecipes = [
             { name: 'Gold', required: 2 }
         ]
     },
-    {
-        id: 3,
-        character: { name: 'Spark', image: 'placeholder.png' },
-        materials: [
-            { name: 'Wood', required: 6 },
-            { name: 'Stone', required: 4 },
-            { name: 'Iron', required: 3 },
-            { name: 'Gold', required: 2 }
-        ]
-    },
 ];
 
+let ownedCharacters = JSON.parse(localStorage.getItem('ownedCharacters')) || [];
+if (!ownedCharacters.length) {
+    ownedCharacters.push('Ember');
+    localStorage.setItem('ownedCharacters', JSON.stringify(ownedCharacters));
+}
 
 const characters = [
-    { id: 1, name: 'Ember', image: 'placeholder.png' },
+    { id: 1, name: 'Ember', image: 'https://lh3.googleusercontent.com/d/1yj49UljxenjqOEWE6QQK5szC-mJMCtxy' },
     { id: 2, name: 'Frostbite', image: 'placeholder.png' },
     { id: 3, name: 'Spark', image: 'placeholder.png' },
-    
 ];
 
-const ownedCharacters = ['Ember'];
-
-
-
-const playerMaterials = {
-    Wood: 15,
-    Stone: 3,
-    Iron: 4,
-    Gold: 0
-};
+let playerMaterials = JSON.parse(localStorage.getItem('inventory')) || {};
 
 function showShopPopup() {
     const popup = document.getElementById('shopPopup');
@@ -85,18 +70,15 @@ function hideCraftingPopup() {
 
 function startGame() {
     window.location.href = '/game.html';
-
-    
 }
 
 function button5Action() {
-    alert('Don\'t bother with this. Social isn\'t going to work for a while.')
-    
+    alert('Don\'t bother with this. Social isn\'t going to work for a while.');
 }
 
 function handleShopItemClick(itemId) {
     console.log(`Item ${itemId} selected`);
-    
+
     switch (itemId) {
         case 1:
             alert('Item 1 selected');
@@ -104,7 +86,6 @@ function handleShopItemClick(itemId) {
         case 2:
             alert('Item 2 selected');
             break;
-        
         default:
             alert("A wild error appeared!");
     }
@@ -112,38 +93,15 @@ function handleShopItemClick(itemId) {
 
 function handleCharacterItemClick(itemId) {
     console.log(`Character ${itemId} selected`);
-    
-    switch (itemId) {
-        case 1:
-            if (ownedCharacters.includes('Ember')) {
-                localStorage.setItem('vulgarian', "Ember")
-                alert('Successfully Switched to Ember');
-            }
-            else {
-                alert('You don\'t own Ember');
-            }
-            break;
-        case 2:
-            if (ownedCharacters.includes('Frostbite')) {
-                localStorage.setItem('vulgarian', "Frostbite")
-                alert('Successfully Switched to Frostbite');
-            }
-            else {
-                alert('You don\'t own Frostbite');
-            }
-            break;
-        case 2:
-            if (ownedCharacters.includes('Spark')) {
-                localStorage.setItem('vulgarian', "Spark")
-                alert('Successfully Switched to Spark');
-            }
-            else {
-                alert('You don\'t own Spark');
-            }
-            break;
-        
-        default:
-            alert("A wild error appeared!");
+
+    let characterName = characters.find(c => c.id === itemId)?.name;
+    let ownedCharacters = localStorage.getItem('ownedCharacters');
+
+    if (characterName && ownedCharacters.includes(characterName)) {
+        localStorage.setItem('vulgarian', characterName);
+        alert(`Successfully switched to ${characterName}`);
+    } else {
+        alert(`You don't own ${characterName}`);
     }
 }
 
@@ -157,7 +115,7 @@ function handleCraftingItemClick(recipeId) {
     }
 
     const craftingItemsContainer = document.querySelector('.crafting-items');
-    craftingItemsContainer.innerHTML = ''; 
+    craftingItemsContainer.innerHTML = '';
 
     const title = document.createElement('h2');
     title.className = 'crafting-title';
@@ -171,18 +129,44 @@ function handleCraftingItemClick(recipeId) {
     const textContainer = document.createElement('div');
     textContainer.className = 'text-container';
 
+    let canCraft = true;
+    const inventory = JSON.parse(localStorage.getItem('inventory')) || {};
+
     recipe.materials.forEach(material => {
         const textSlot = document.createElement('div');
         textSlot.className = 'text-slot';
-        const playerAmount = playerMaterials[material.name] || 0;
+        const playerAmount = inventory[material.name] || 0;
         textSlot.textContent = `${material.name}: ${playerAmount} / ${material.required}`;
         textContainer.appendChild(textSlot);
+
+        if (playerAmount < material.required) {
+            canCraft = false;
+        }
     });
 
     const button = document.createElement('button');
     button.className = 'crafting-button';
-    button.textContent = 'Craft';
-    button.onclick = () => alert(`${recipe.character.name} crafted!`);
+    button.textContent = canCraft ? 'Craft' : 'Not enough materials';
+    button.disabled = !canCraft;
+
+    if (canCraft) {
+        button.onclick = () => {
+            // Deduct materials from inventory
+            recipe.materials.forEach(material => {
+                inventory[material.name] -= material.required;
+            });
+    
+            // Save updated inventory back to localStorage
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+    
+            // Append the crafted character to ownedCharacters in localStorage
+            let ownedCharacters = JSON.parse(localStorage.getItem('ownedCharacters')) || [];
+            ownedCharacters.push(recipe.character.name);
+            localStorage.setItem('ownedCharacters', JSON.stringify(ownedCharacters));
+    
+            alert(`${recipe.character.name} crafted!`);
+        };
+    }    
 
     craftingItemsContainer.appendChild(title);
     craftingItemsContainer.appendChild(image);
@@ -190,13 +174,13 @@ function handleCraftingItemClick(recipeId) {
     craftingItemsContainer.appendChild(button);
 
     const popup = document.getElementById('craftingPopup');
-    popup.scrollTop = 0; 
+    popup.scrollTop = 0;
     popup.style.display = 'block';
 }
 
 function populateShopItems() {
     const shopItemsContainer = document.querySelector('.shop-items');
-    shopItemsContainer.innerHTML = ''; 
+    shopItemsContainer.innerHTML = '';
 
     for (let i = 1; i <= 9; i++) {
         const item = document.createElement('div');
@@ -206,7 +190,7 @@ function populateShopItems() {
         itemText.textContent = `Item ${i}`;
 
         const itemImage = document.createElement('img');
-        itemImage.src = `placeholder.png`;
+        itemImage.src = 'placeholder.png';
         itemImage.alt = `Item ${i}`;
 
         const itemButton = document.createElement('button');
@@ -223,34 +207,45 @@ function populateShopItems() {
 
 function populateCharacterItems() {
     const characterItemsContainer = document.querySelector('.character-items');
-    characterItemsContainer.innerHTML = ''; 
+    characterItemsContainer.innerHTML = '';
 
-    craftingRecipes.forEach((recipe) => {
+    const ownedCharacters = JSON.parse(localStorage.getItem('ownedCharacters')) || [];
+
+    characters.forEach((character) => {
         const item = document.createElement('div');
         item.className = 'popup-item';
 
         const itemText = document.createElement('p');
-        itemText.textContent = recipe.character.name;
+        itemText.textContent = character.name;
 
         const itemImage = document.createElement('img');
-        itemImage.src = recipe.character.image;
-        itemImage.alt = recipe.character.name;
+        itemImage.src = character.image;
+        itemImage.alt = character.name;
 
         const itemButton = document.createElement('button');
         itemButton.textContent = 'Select';
-        itemButton.setAttribute('onclick', `handleCharacterItemClick(${recipe.id})`);
+        itemButton.setAttribute('onclick', `handleCharacterItemClick(${character.id})`);
 
         item.appendChild(itemText);
         item.appendChild(itemImage);
-        item.appendChild(itemButton);
 
+        // Check if the character is owned and add an indicator if true
+        if (ownedCharacters.includes(character.name)) {
+            const ownedIndicator = document.createElement('span');
+            ownedIndicator.textContent = '✔ Owned';
+            ownedIndicator.className = 'owned-indicator';
+            item.appendChild(ownedIndicator);
+        }
+
+        item.appendChild(itemButton);
         characterItemsContainer.appendChild(item);
     });
 }
 
+
 function populateCraftingItems() {
     const craftingItemsContainer = document.querySelector('.crafting-items');
-    craftingItemsContainer.innerHTML = ''; 
+    craftingItemsContainer.innerHTML = '';
 
     craftingRecipes.forEach((recipe) => {
         const item = document.createElement('div');

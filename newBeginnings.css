@@ -151,21 +151,29 @@ html {
     border-radius: 50%;
 }
 
-.item-popup {
+#popupContainer {
     position: fixed;
-    top: 10px;
+    bottom: 10px;
     right: 10px;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    border-radius: 5px;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     z-index: 1000;
-    display: none; /* Start hidden */
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Space between popups */
+}
+
+.item-popup {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .item-popup.show {
-    display: block; /* Show the popup */
+    opacity: 1;
+    transform: translateY(0);
 }
+

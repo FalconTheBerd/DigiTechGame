@@ -519,29 +519,77 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function dropItem(enemy) {
-        const itemTypes = ['Gold']; // Example item types
-        const randomItem = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+        const itemTypes = ['Gold', 'Ice Heart', 'Temperature Stabiliser', 'Exo Suit Part']; // Example item types
+        const weights = [50, 20, 15, 15]; // Weights corresponding to the item types
+    
+        const randomItem = weightedRandom(itemTypes, weights);
     
         if (!inventory[randomItem]) {
             inventory[randomItem] = 0;
         }
+    
+            let amount = 1;
+    
+            if (randomItem === 'Gold') {
+                amount = Math.floor(Math.random() * 10) + 1;
+                inventory[randomItem] += amount;
+                console.log(`Dropped ${amount} ${randomItem}. Total: ${inventory[randomItem]}`);
+            } else {
+                inventory[randomItem]++;
+                console.log(`Dropped ${randomItem}. Total: ${inventory[randomItem]}`);
+            }
+    
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            showItemPopup(randomItem, amount);
         
-        if (Math.round(Math.random()) !== 1){
-        inventory[randomItem]++;
-        localStorage.setItem('inventory', JSON.stringify(inventory));
-    
-        console.log(`Dropped ${randomItem}. Total: ${inventory[randomItem]}`);
-    
-        showItemPopup(randomItem);
-    }
     }
     
-    function showItemPopup(item) {
+    function weightedRandom(items, weights) {
+        const totalWeight = weights.reduce((acc, weight) => acc + weight, 0);
+        const randomValue = Math.random() * totalWeight;
+    
+        let cumulativeWeight = 0;
+        for (let i = 0; i < items.length; i++) {
+            cumulativeWeight += weights[i];
+            if (randomValue < cumulativeWeight) {
+                return items[i];
+            }
+        }
+    }    
+    
+    function showItemPopup(item, amount = 1) {
+        // Create or select the popup container
+        let popupContainer = document.getElementById('popupContainer');
+        if (!popupContainer) {
+            popupContainer = document.createElement('div');
+            popupContainer.id = 'popupContainer';
+            popupContainer.style.position = 'fixed';
+            popupContainer.style.bottom = '10px';
+            popupContainer.style.right = '10px';
+            popupContainer.style.width = '200px';
+            popupContainer.style.zIndex = '1000';
+            document.body.appendChild(popupContainer);
+        }
+    
+        // Create a new popup item
         const popup = document.createElement('div');
         popup.className = 'item-popup';
-        popup.textContent = `You got: ${item}`;
+        popup.style.marginBottom = '5px';
+        popup.style.backgroundColor = '#333';
+        popup.style.color = '#fff';
+        popup.style.padding = '10px';
+        popup.style.borderRadius = '5px';
+        popup.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
         
-        document.body.appendChild(popup);
+        // Set the popup text based on the item
+        if (item === 'Gold') {
+            popup.textContent = `You got: ${amount} Gold`;
+        } else {
+            popup.textContent = `You got: ${item}`;
+        }
+    
+        // Append the popup to the container
+        popupContainer.appendChild(popup);
     
         // Show the popup
         setTimeout(() => {
@@ -550,10 +598,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
         // Hide the popup after 2 seconds
         setTimeout(() => {
-            popup.classList.remove('show');
             popup.remove();
+            // If the container is empty, remove it
+            if (popupContainer.childNodes.length === 0) {
+                popupContainer.remove();
+            }
         }, 2000);
     }
+    
+    
 
     function spawnWave(enemyCount) {
         for (let i = 0; i < enemyCount; i++) {

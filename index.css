@@ -85,7 +85,7 @@ button:hover {
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
-    max-width: 900px;
+    max-width: 1000px;
     max-height: 80%;
     overflow-y: auto;
     position: relative;
@@ -141,6 +141,7 @@ button:hover {
 
 .popup-item button, .crafting-item button {
     margin-top: 10px;
+    height: 50px;
     padding: 10px;
     border: none;
     background-color: #007bff;
