@@ -227,31 +227,38 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 flame.style.left = `${flameLeft}px`;
     
                 // Check for collision with enemies
+                let hit = false;
                 document.querySelectorAll('.enemy').forEach(enemy => {
-                    const enemyRect = enemy.getBoundingClientRect();
-                    if (flameTop >= enemyRect.top && flameTop <= enemyRect.bottom &&
-                        flameLeft >= enemyRect.left && flameLeft <= enemyRect.right) {
-                        enemy.remove();
-                        dropItem(enemy);
-                        flame.remove();
-                        return; // Stop further checks after hitting an enemy
+                    if (!hit) {
+                        const enemyRect = enemy.getBoundingClientRect();
+                        if (flameTop >= enemyRect.top && flameTop <= enemyRect.bottom &&
+                            flameLeft >= enemyRect.left && flameLeft <= enemyRect.right) {
+                            enemy.remove();
+                            dropItem(enemy);
+                            hit = true;  // Mark as hit
+                            flame.remove();
+                        }
                     }
                 });
     
                 // Check for collision with bosses
-                document.querySelectorAll('.boss').forEach(boss => {
-                    const bossRect = boss.getBoundingClientRect();
-                    if (flameTop >= bossRect.top && flameTop <= bossRect.bottom &&
-                        flameLeft >= bossRect.left && flameLeft <= bossRect.right) {
-                        boss.takeDamage(3); // Adjust the damage as needed
-                        flame.remove();
-                        return; // Stop further checks after hitting the boss
-                    }
-                });
+                if (!hit) {
+                    document.querySelectorAll('.boss').forEach(boss => {
+                        if (!hit) {
+                            const bossRect = boss.getBoundingClientRect();
+                            if (flameTop >= bossRect.top && flameTop <= bossRect.bottom &&
+                                flameLeft >= bossRect.left && flameLeft <= bossRect.right) {
+                                boss.takeDamage(5); // Adjust the damage as needed
+                                hit = true;  // Mark as hit
+                                flame.remove();
+                            }
+                        }
+                    });
+                }
     
-                if (flameTop < 0 || flameTop > window.innerHeight || flameLeft < 0 || flameLeft > window.innerWidth) {
+                if (!hit && (flameTop < 0 || flameTop > window.innerHeight || flameLeft < 0 || flameLeft > window.innerWidth)) {
                     flame.remove();
-                } else {
+                } else if (!hit) {
                     requestAnimationFrame(moveFlame);
                 }
             }
@@ -359,10 +366,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
             document.body.appendChild(wave);
     
             const speed = 3;
-            const delay = i * 100; // delay each wave
+            const delay = i * 100; // Delay each wave
     
             setTimeout(() => {
+                let hit = false; // Track if the wave has hit anything
+    
                 function moveWave() {
+                    if (hit) return; // Stop if the wave has already hit something
+    
                     const waveTop = parseInt(wave.style.top);
                     const waveLeft = parseInt(wave.style.left);
                     wave.style.top = `${waveTop + speed * Math.sin(angle)}px`;
@@ -370,30 +381,37 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
                     // Check for collision with enemies
                     document.querySelectorAll('.enemy').forEach(enemy => {
-                        const enemyRect = enemy.getBoundingClientRect();
-                        if (waveTop >= enemyRect.top && waveTop <= enemyRect.bottom &&
-                            waveLeft >= enemyRect.left && waveLeft <= enemyRect.right) {
-                            enemy.remove();
-                            dropItem(enemy);
-                            wave.remove();
-                            return; // Stop further checks after hitting an enemy
+                        if (!hit) {
+                            const enemyRect = enemy.getBoundingClientRect();
+                            if (waveTop >= enemyRect.top && waveTop <= enemyRect.bottom &&
+                                waveLeft >= enemyRect.left && waveLeft <= enemyRect.right) {
+                                enemy.remove();
+                                dropItem(enemy);
+                                hit = true; // Mark as hit
+                                wave.remove();
+                            }
                         }
                     });
     
                     // Check for collision with bosses
-                    document.querySelectorAll('.boss').forEach(boss => {
-                        const bossRect = boss.getBoundingClientRect();
-                        if (waveTop >= bossRect.top && waveTop <= bossRect.bottom &&
-                            waveLeft >= bossRect.left && waveLeft <= bossRect.right) {
-                            boss.takeDamage(25); // Adjust the damage as needed
-                            wave.remove();
-                            return; // Stop further checks after hitting the boss
-                        }
-                    });
+                    if (!hit) {
+                        document.querySelectorAll('.boss').forEach(boss => {
+                            if (!hit) {
+                                const bossRect = boss.getBoundingClientRect();
+                                if (waveTop >= bossRect.top && waveTop <= bossRect.bottom &&
+                                    waveLeft >= bossRect.left && waveLeft <= bossRect.right) {
+                                    boss.takeDamage(25); // Adjust the damage as needed
+                                    hit = true; // Mark as hit
+                                    wave.remove();
+                                }
+                            }
+                        });
+                    }
     
-                    if (waveTop < 0 || waveTop > window.innerHeight || waveLeft < 0 || waveLeft > window.innerWidth) {
+                    if (!hit && (waveTop < 0 || waveTop > window.innerHeight || waveLeft < 0 || waveLeft > window.innerWidth)) {
                         wave.remove();
-                    } else {
+                        hit = true; // Mark as hit if it leaves the screen
+                    } else if (!hit) {
                         requestAnimationFrame(moveWave);
                     }
                 }
@@ -402,6 +420,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }, delay);
         }
     }
+    
     
     
     
@@ -663,6 +682,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 const healthPercentage = (boss.health / 200) * 100;
                 healthBar.style.width = `${healthPercentage}%`;
                 healthBar.style.backgroundColor = healthPercentage > 60 ? '#4caf50' : healthPercentage > 30 ? '#ffeb3b' : '#f44336';
+                console.log(`boss took ${damage}, health is now ${boss.health}`);
             }
         };
     

@@ -200,12 +200,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
-    function flameBarrage() {
-        const player = document.getElementById('player');
+    function flameBarrage(event) {
         const playerRect = player.getBoundingClientRect();
         const playerCenterX = playerRect.left + playerRect.width / 2;
         const playerCenterY = playerRect.top + playerRect.height / 2;
-
+    
         for (let i = 0; i < 5; i++) {
             const flame = document.createElement('div');
             flame.className = 'flame';
@@ -213,117 +212,213 @@ document.addEventListener('DOMContentLoaded', (event) => {
             flame.style.top = `${playerCenterY}px`;
             flame.style.left = `${playerCenterX}px`;
             document.body.appendChild(flame);
-
+    
             const speed = 5;
             const deltaY = mouseY - playerCenterY;
             const deltaX = mouseX - playerCenterX;
-
+    
             const offsetAngle = Math.atan2(deltaY, deltaX) + (Math.random() - 0.5) * 0.2;
-
+    
             function moveFlame() {
                 let flameTop = parseFloat(flame.style.top);
                 let flameLeft = parseFloat(flame.style.left);
-
+    
                 flameTop += speed * Math.sin(offsetAngle);
                 flameLeft += speed * Math.cos(offsetAngle);
-
+    
                 flame.style.top = `${flameTop}px`;
                 flame.style.left = `${flameLeft}px`;
-
-                if (flameTop < 0 || flameTop > window.innerHeight || flameLeft < 0 || flameLeft > window.innerWidth) {
+    
+                // Check for collision with enemies
+                let hit = false;
+                document.querySelectorAll('.enemy').forEach(enemy => {
+                    if (!hit) {
+                        const enemyRect = enemy.getBoundingClientRect();
+                        if (flameTop >= enemyRect.top && flameTop <= enemyRect.bottom &&
+                            flameLeft >= enemyRect.left && flameLeft <= enemyRect.right) {
+                            enemy.remove();
+                            dropItem(enemy);
+                            hit = true;  // Mark as hit
+                            flame.remove();
+                        }
+                    }
+                });
+    
+                // Check for collision with bosses
+                if (!hit) {
+                    document.querySelectorAll('.boss').forEach(boss => {
+                        if (!hit) {
+                            const bossRect = boss.getBoundingClientRect();
+                            if (flameTop >= bossRect.top && flameTop <= bossRect.bottom &&
+                                flameLeft >= bossRect.left && flameLeft <= bossRect.right) {
+                                boss.takeDamage(5); // Adjust the damage as needed
+                                hit = true;  // Mark as hit
+                                flame.remove();
+                            }
+                        }
+                    });
+                }
+    
+                if (!hit && (flameTop < 0 || flameTop > window.innerHeight || flameLeft < 0 || flameLeft > window.innerWidth)) {
                     flame.remove();
-                } else {
+                } else if (!hit) {
                     requestAnimationFrame(moveFlame);
                 }
             }
-
+    
             requestAnimationFrame(moveFlame);
         }
     }
-
-    function fireball() {
-        const player = document.getElementById('player');
+    
+    function fireball(event) {
         const playerRect = player.getBoundingClientRect();
         const playerCenterX = playerRect.left + playerRect.width / 2;
         const playerCenterY = playerRect.top + playerRect.height / 2;
-
+    
         const angle = Math.atan2(mouseY - playerCenterY, mouseX - playerCenterX);
-
+    
         const fireball = document.createElement('div');
         fireball.className = 'fireball';
+        fireball.style.position = 'absolute';
         fireball.style.top = `${playerCenterY}px`;
         fireball.style.left = `${playerCenterX}px`;
         document.body.appendChild(fireball);
-
+    
         const speed = 10;
-
+    
         function moveFireball() {
             const fireballTop = parseInt(fireball.style.top);
             const fireballLeft = parseInt(fireball.style.left);
             fireball.style.top = `${fireballTop + speed * Math.sin(angle)}px`;
             fireball.style.left = `${fireballLeft + speed * Math.cos(angle)}px`;
-
-            if (fireballTop < 0 || fireballTop > window.innerHeight || fireballLeft < 0 || fireballLeft > window.innerWidth) {
-                fireball.remove();
-            } else {
-                requestAnimationFrame(moveFireball);
+    
+            let hit = false;  // Track whether the fireball has hit something
+    
+            // Check for collision with the boss
+            document.querySelectorAll('.boss').forEach(boss => {
+                if (hit) return;  // Exit if already hit
+                const bossRect = boss.getBoundingClientRect();
+                if (fireballTop >= bossRect.top && fireballTop <= bossRect.bottom &&
+                    fireballLeft >= bossRect.left && fireballLeft <= bossRect.right) {
+                    boss.takeDamage(30); // Apply correct damage
+                    fireball.remove();  // Remove the fireball immediately
+                    hit = true;  // Mark as hit to prevent further processing
+                }
+            });
+    
+            // Check for collision with enemies
+            if (!hit) {  // Only check if it hasn't already hit the boss
+                document.querySelectorAll('.enemy').forEach(enemy => {
+                    if (hit) return;  // Exit if already hit
+                    const enemyRect = enemy.getBoundingClientRect();
+                    if (fireballTop >= enemyRect.top && fireballTop <= enemyRect.bottom &&
+                        fireballLeft >= enemyRect.left && fireballLeft <= enemyRect.right) {
+                        enemy.remove();
+                        dropItem(enemy);
+                        fireball.remove();  // Remove the fireball immediately
+                        hit = true;  // Mark as hit to prevent further processing
+                    }
+                });
+            }
+    
+            if (!hit) {  // Only continue moving if it hasn't hit anything
+                if (fireballTop < 0 || fireballTop > window.innerHeight || fireballLeft < 0 || fireballLeft > window.innerWidth) {
+                    fireball.remove();  // Remove fireball if it leaves the screen
+                } else {
+                    requestAnimationFrame(moveFireball);
+                }
             }
         }
-
+    
         requestAnimationFrame(moveFireball);
     }
-
+    
+    
+    
     function thermalShield() {
-        const player = document.getElementById('player');
-
         let shield = document.querySelector('.thermalShield');
         if (!shield) {
             shield = document.createElement('div');
             shield.className = 'thermalShield';
             player.appendChild(shield);
         }
-
-        
+    
+        // Shield blocks bullets for 4 seconds
+        shield.dataset.active = 'true';
+    
         setTimeout(() => {
             if (shield) {
+                shield.dataset.active = 'false';
                 shield.remove();
             }
         }, 4000);
     }
-
-
-    function flameWave() {
-        const player = document.getElementById('player');
+    
+    function flameWave(event) {
         const playerRect = player.getBoundingClientRect();
         const playerCenterX = playerRect.left + playerRect.width / 2;
         const playerCenterY = playerRect.top + playerRect.height / 2;
-
+    
         const angle = Math.atan2(mouseY - playerCenterY, mouseX - playerCenterX);
-
+    
         for (let i = 0; i < 5; i++) {
             const wave = document.createElement('div');
             wave.className = 'flameWave';
             wave.style.top = `${playerCenterY}px`;
             wave.style.left = `${playerCenterX}px`;
             document.body.appendChild(wave);
-
+    
             const speed = 3;
-            const delay = i * 100; 
-
+            const delay = i * 100; // Delay each wave
+    
             setTimeout(() => {
+                let hit = false; // Track if the wave has hit anything
+    
                 function moveWave() {
+                    if (hit) return; // Stop if the wave has already hit something
+    
                     const waveTop = parseInt(wave.style.top);
                     const waveLeft = parseInt(wave.style.left);
                     wave.style.top = `${waveTop + speed * Math.sin(angle)}px`;
                     wave.style.left = `${waveLeft + speed * Math.cos(angle)}px`;
-
-                    if (waveTop < 0 || waveTop > window.innerHeight || waveLeft < 0 || waveLeft > window.innerWidth) {
+    
+                    // Check for collision with enemies
+                    document.querySelectorAll('.enemy').forEach(enemy => {
+                        if (!hit) {
+                            const enemyRect = enemy.getBoundingClientRect();
+                            if (waveTop >= enemyRect.top && waveTop <= enemyRect.bottom &&
+                                waveLeft >= enemyRect.left && waveLeft <= enemyRect.right) {
+                                enemy.remove();
+                                dropItem(enemy);
+                                hit = true; // Mark as hit
+                                wave.remove();
+                            }
+                        }
+                    });
+    
+                    // Check for collision with bosses
+                    if (!hit) {
+                        document.querySelectorAll('.boss').forEach(boss => {
+                            if (!hit) {
+                                const bossRect = boss.getBoundingClientRect();
+                                if (waveTop >= bossRect.top && waveTop <= bossRect.bottom &&
+                                    waveLeft >= bossRect.left && waveLeft <= bossRect.right) {
+                                    boss.takeDamage(25); // Adjust the damage as needed
+                                    hit = true; // Mark as hit
+                                    wave.remove();
+                                }
+                            }
+                        });
+                    }
+    
+                    if (!hit && (waveTop < 0 || waveTop > window.innerHeight || waveLeft < 0 || waveLeft > window.innerWidth)) {
                         wave.remove();
-                    } else {
+                        hit = true; // Mark as hit if it leaves the screen
+                    } else if (!hit) {
                         requestAnimationFrame(moveWave);
                     }
                 }
-
+    
                 moveWave();
             }, delay);
         }
@@ -370,7 +465,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     
-    createDungeonNode('New Beginnings', 300, 300, '20 mins', 'newBeginnings');
+    createDungeonNode('New Beginnings', 700, 50, '20 mins', 'newBeginnings');
     createDungeonNode('Ancient Ruins', 500, 400, '30 mins', 'ancientRuins');
     createDungeonNode('Haunted Forest', 200, 600, '25 mins', 'hauntedForest');
 
