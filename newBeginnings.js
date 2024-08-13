@@ -729,7 +729,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 dropItem(boss);
                 dropItem(boss);
                 dropItem(boss);
-                sleep(2000).then(() => { window.location.href = '/game.html'; });
+                sleep(2000).then(() => { window.location.href = 'game.html'; });
 
             } else {
                 const healthPercentage = (boss.health / 200) * 100;

@@ -69,7 +69,7 @@ function hideCraftingPopup() {
 }
 
 function startGame() {
-    window.location.href = '/game.html';
+    window.location.href = 'game.html';
 }
 
 function button5Action() {

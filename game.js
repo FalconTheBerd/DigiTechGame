@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             isEscape = (evt.keyCode === 27);
         }
         if (isEscape) {
-            window.location.href = '/index.html'
+            window.location.href = 'index.html'
         }
     };
 
