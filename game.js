@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const abilities = {
         Ember: {
             flameBarrage: {
-                icon: 'placeholder.png',
+                icon: 'https://lh3.googleusercontent.com/d/14qnxoecbnvyX5KMQcj5syAMHnt5TLwKw',
                 cooldown: 5000,
                 lastUsed: 0,
                 action: function (event) {
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 }
             },
             fireball: {
-                icon: 'placeholder.png',
+                icon: 'https://lh3.googleusercontent.com/d/10RVm0LvavPzB20L_I_9ZsmH4Mso655dZ',
                 cooldown: 3000,
                 lastUsed: 0,
                 action: function (event) {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 }
             },
             thermalShield: {
-                icon: 'placeholder.png',
+                icon: 'https://lh3.googleusercontent.com/d/1nQU0tmEG1Z__sT4DfuFkjdnfgTeNtPgc',
                 cooldown: 15000,
                 lastUsed: 0,
                 action: function () {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 }
             },
             flameWave: {
-                icon: 'placeholder.png',
+                icon: 'https://lh3.googleusercontent.com/d/13pizwOJhLPj7u1AwcizkxUp-1Nt8rQUJ',
                 cooldown: 10000,
                 lastUsed: 0,
                 action: function (event) {
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function setPlayerImage(vulgarian) {
         switch (vulgarian) {
             case 'Ember':
-                player.style.backgroundImage = 'url(placeholder.png)';
+                player.style.backgroundImage = 'url(https://lh3.googleusercontent.com/d/1yj49UljxenjqOEWE6QQK5szC-mJMCtxy)';
                 break;
             default:
                 player.style.backgroundImage = 'url(placeholder.png)';

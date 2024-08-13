@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const abilities = {
         Ember: {
             flameBarrage: {
-                icon: 'placeholder.png',
+                icon: 'https://lh3.googleusercontent.com/d/14qnxoecbnvyX5KMQcj5syAMHnt5TLwKw',
                 cooldown: 5000,
                 lastUsed: 0,
                 action: function (event) {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 }
             },
             fireball: {
-                icon: 'placeholder.png',
+                icon: 'https://lh3.googleusercontent.com/d/10RVm0LvavPzB20L_I_9ZsmH4Mso655dZ',
                 cooldown: 3000,
                 lastUsed: 0,
                 action: function (event) {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 }
             },
             thermalShield: {
-                icon: 'placeholder.png',
+                icon: 'https://lh3.googleusercontent.com/d/1nQU0tmEG1Z__sT4DfuFkjdnfgTeNtPgc',
                 cooldown: 15000,
                 lastUsed: 0,
                 action: function () {
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 }
             },
             flameWave: {
-                icon: 'placeholder.png',
+                icon: 'https://lh3.googleusercontent.com/d/13pizwOJhLPj7u1AwcizkxUp-1Nt8rQUJ',
                 cooldown: 10000,
                 lastUsed: 0,
                 action: function (event) {
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     const bossRect = boss.getBoundingClientRect();
                     if (flameTop >= bossRect.top && flameTop <= bossRect.bottom &&
                         flameLeft >= bossRect.left && flameLeft <= bossRect.right) {
-                        boss.takeDamage(20); // Adjust the damage as needed
+                        boss.takeDamage(3); // Adjust the damage as needed
                         flame.remove();
                         return; // Stop further checks after hitting the boss
                     }
@@ -412,6 +412,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         enemy.style.top = `${top}px`;
         enemy.style.left = `${left}px`;
         enemy.dataset.type = type; // Store enemy type in dataset for drops
+        enemy.style.backgroundImage = 'url("https://lh3.googleusercontent.com/d/16IkZCYSnwFIjSKp51rP7qRFahjtjKQjp")'; // Correct URL format
+        enemy.style.backgroundSize = 'cover'; // Ensures the image covers the div
         document.body.appendChild(enemy);
 
         const speed = 2;
@@ -552,7 +554,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         boss.style.left = `${left}px`;
         boss.style.width = '100px'; // Boss size to make it visible
         boss.style.height = '100px';
-        boss.style.backgroundColor = 'red'; // Make the boss visible
+        boss.style.backgroundImage = 'url("https://lh3.googleusercontent.com/d/1uM2rvMfFQ0v7GnvAqj00M-f9QzxHiK1S")'; // Correct URL format
+        boss.style.backgroundSize = 'cover'; // Ensures the image covers the div
     
         // Create the health bar container and health bar (same as before)
         const healthBarContainer = document.createElement('div');
