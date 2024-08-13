@@ -735,7 +735,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 dropItem(boss);
 
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                const redirectPath = isLocal ? 'game.html' : '/reponame/game.html';
+                const redirectPath = isLocal ? 'game.html' : '/DigiTechGame/game.html';
 
                 sleep(5000).then(() => {
                     window.location.href = redirectPath;
