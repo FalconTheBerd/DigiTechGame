@@ -482,7 +482,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             bullet.style.left = `${enemyCenterX}px`;
             document.body.appendChild(bullet);
 
-            const bulletSpeed = 5;
+            const bulletSpeed = 10;
             const bulletDamage = 5; // Reduced bullet damage
 
             function moveBullet() {
@@ -634,7 +634,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             bullet.style.borderRadius = '50%';
             document.body.appendChild(bullet);
     
-            const bulletSpeed = 4;
+            const bulletSpeed = 7;
             const bulletDamage = 20;
     
             function moveBullet() {
@@ -676,7 +676,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 dropItem(boss);
                 dropItem(boss);
                 dropItem(boss);
-                sleep(2000).then(() => { window.location.href = 'game.html'; });
+                sleep(2000).then(() => { window.location.href = '/game.html'; });
 
             } else {
                 const healthPercentage = (boss.health / 200) * 100;

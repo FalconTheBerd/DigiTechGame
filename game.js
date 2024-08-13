@@ -1,6 +1,19 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     let mouseX, mouseY;
 
+    document.onkeydown = function(evt) {
+        evt = evt || window.event;
+        var isEscape = false;
+        if ("key" in evt) {
+            isEscape = (evt.key === "Escape" || evt.key === "Esc");
+        } else {
+            isEscape = (evt.keyCode === 27);
+        }
+        if (isEscape) {
+            window.location.href = '/index.html'
+        }
+    };
+
     
     document.addEventListener('mousemove', (event) => {
         mouseX = event.clientX;
