@@ -490,9 +490,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     
-    createDungeonNode('New Beginnings', 700, 50, '20 mins', 'newBeginnings');
-    createDungeonNode('Ancient Ruins', 500, 400, '30 mins', 'ancientRuins');
-    createDungeonNode('Haunted Forest', 200, 600, '25 mins', 'hauntedForest');
+    createDungeonNode('New Beginnings', 200, 50, '1 min', 'newBeginnings');
+    createDungeonNode('Ancient Ruins', 400, 50, '30 mins', 'ancientRuins');
+    createDungeonNode('Haunted Forest', 600, 50, '25 mins', 'hauntedForest');
 
     
     requestAnimationFrame(movePlayer);

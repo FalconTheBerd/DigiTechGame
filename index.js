@@ -1,5 +1,10 @@
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
+if (!localStorage.getItem('vulgarian')){
+    localStorage.setItem('vulgarian', 'Ember');
+
+}
+
 const craftingRecipes = [
     {
         id: 1,
