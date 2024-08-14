@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         if (flameTop >= enemyRect.top && flameTop <= enemyRect.bottom &&
                             flameLeft >= enemyRect.left && flameLeft <= enemyRect.right) {
                             enemy.remove();
-                            dropItem(enemy);
+                            dropItem("enemy");
                             hit = true;  // Mark as hit
                             flame.remove();
                         }
@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     if (fireballTop >= enemyRect.top && fireballTop <= enemyRect.bottom &&
                         fireballLeft >= enemyRect.left && fireballLeft <= enemyRect.right) {
                         enemy.remove();
-                        dropItem(enemy);
+                        dropItem("enemy");
                         fireball.remove();  // Remove the fireball immediately
                         hit = true;  // Mark as hit to prevent further processing
                     }
@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                             if (waveTop >= enemyRect.top && waveTop <= enemyRect.bottom &&
                                 waveLeft >= enemyRect.left && waveLeft <= enemyRect.right) {
                                 enemy.remove();
-                                dropItem(enemy);
+                                dropItem("enemy");
                                 hit = true; // Mark as hit
                                 wave.remove();
                             }
@@ -523,29 +523,36 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function dropItem(enemy) {
         const itemTypes = ['Gold', 'Ice Heart', 'Temperature Stabiliser', 'Exo Suit Part']; // Example item types
-        const weights = [50, 20, 15, 15]; // Weights corresponding to the item types
-
-        const randomItem = weightedRandom(itemTypes, weights);
-
-        if (!inventory[randomItem]) {
-            inventory[randomItem] = 0;
-        }
-
+        const randomItem = itemTypes[Math.floor(Math.random() * itemTypes.length)];
         let amount = 1;
-
-        if (randomItem === 'Gold') {
-            amount = Math.floor(Math.random() * 10) + 1;
-            inventory[randomItem] += amount;
+    
+        if (enemy === 'enemy') {  // Correct comparison using '==='
+            const dropChance = Math.round(Math.random());
+            console.log(`Drop chance: ${dropChance}`); // Log the drop chance
+    
+            if (dropChance === 1) { // 50/50 chance
+                if (randomItem === 'Gold') {
+                    amount = Math.floor(Math.random() * 10) + 1;
+                }
+                inventory[randomItem] = (inventory[randomItem] || 0) + amount;
+                console.log(`Dropped ${amount} ${randomItem}. Total: ${inventory[randomItem]}`);
+                localStorage.setItem('inventory', JSON.stringify(inventory));
+                showItemPopup(randomItem, amount);
+            } else {
+                console.log('No item dropped.');
+            }
+        } else {  // Always drop if something other than 'enemy' is passed
+            if (randomItem === 'Gold') {
+                amount = Math.floor(Math.random() * 10) + 1;
+            }
+            inventory[randomItem] = (inventory[randomItem] || 0) + amount;
             console.log(`Dropped ${amount} ${randomItem}. Total: ${inventory[randomItem]}`);
-        } else {
-            inventory[randomItem]++;
-            console.log(`Dropped ${randomItem}. Total: ${inventory[randomItem]}`);
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            showItemPopup(randomItem, amount);
         }
-
-        localStorage.setItem('inventory', JSON.stringify(inventory));
-        showItemPopup(randomItem, amount);
-
     }
+    
+    
 
     function weightedRandom(items, weights) {
         const totalWeight = weights.reduce((acc, weight) => acc + weight, 0);
@@ -690,7 +697,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             bullet.style.borderRadius = '50%';
             document.body.appendChild(bullet);
 
-            const bulletSpeed = 7;
+            const bulletSpeed = 15;
             const bulletDamage = 20;
 
             function moveBullet() {
@@ -730,9 +737,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             if (boss.health <= 0) {
                 boss.remove();
-                dropItem(boss);
-                dropItem(boss);
-                dropItem(boss);
+                dropItem("boss");
+                dropItem("boss");
+                dropItem("boss");
 
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                 const redirectPath = isLocal ? 'game.html' : '/DigiTechGame/game.html';
@@ -753,7 +760,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 
         moveBoss();
-        setInterval(shootPlayer, 2000);  // Boss shoots every 2 seconds
+        setInterval(shootPlayer, 1000);  // Boss shoots every 1 second
     }
 
 
@@ -763,7 +770,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         function nextWave() {
             if (wave <= 2) {
-                const enemyCount = 1; // Adjust the number of enemies for each wave
+                const enemyCount = wave; // Adjust the number of enemies for each wave
                 spawnWave(enemyCount); // Spawn the correct number of enemies
                 wave++;
             } else if (wave === 3 && !bossCreated) {
@@ -815,7 +822,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
         console.log(`Player health decreased by ${amount}, current health: ${playerHealth}`);
         if (playerHealth === 0) {
             alert('Game Over');
-            // Add logic to handle game over scenario
+            if (isLocal) {
+                window.location.href = `game.html`;
+            } else {
+                window.location.href = `/DigiTechGame/game.html`;
+            }
         }
     }
 
