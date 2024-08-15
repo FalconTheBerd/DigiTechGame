@@ -84,7 +84,7 @@ function startGame() {
 }
 
 function button5Action() {
-    alert('Don\'t bother with this. Social isn\'t going to work for a while.');
+    window.close();
 }
 
 function handleShopItemClick(itemId) {
