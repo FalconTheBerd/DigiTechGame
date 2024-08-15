@@ -1,3 +1,4 @@
+import os
 import asyncio
 import shutil
 import sys
@@ -19,12 +20,21 @@ async def find_chrome_executable():
     print("Chrome executable not found. Please install Google Chrome.")
     sys.exit(1)
 
+def get_user_profile_path():
+    # Construct the user profile path dynamically
+    base_path = os.path.expanduser(r'~\AppData\Local\Google\Chrome\User Data')
+    profile_path = os.path.join(base_path, 'Profile 1')
+    return profile_path
+
 async def main():
     # Find the chrome.exe path automatically
     executable_path = await find_chrome_executable()
 
+    # Get the dynamically constructed user profile directory
+    user_profile_dir = get_user_profile_path()
+
     # Set the URL you want to open directly
-    target_url = 'https://falcontheberd.github.io/DigiTechGame/'  # Replace with your desired URL
+    target_url = 'https://falcontheberd.github.io/DigiTechGame/'
     
     browser = await launch(
         headless=False,
@@ -32,13 +42,16 @@ async def main():
         args=[
             "--disable-infobars",
             "--kiosk",  # Launch the browser in kiosk mode
-            target_url,  # Open the desired URL directly
+            f"--user-data-dir={user_profile_dir}",  # Use the dynamically constructed profile path
         ],
         ignoreDefaultArgs=["--enable-automation", "--enable-blink-features=IdleDetection"],
     )
     
     # Get the first page opened by the browser
     page = (await browser.pages())[0]
+
+    # Navigate to the target URL
+    await page.goto(target_url)
 
     # Dynamically retrieve screen dimensions
     screen_width, screen_height = await page.evaluate('''() => {
@@ -51,7 +64,7 @@ async def main():
         "height": screen_height,
     })
 
-    # Monitor browser pages and close the script when all pages are closed
+    # Keep the browser running until all pages are closed
     while len(await browser.pages()) > 0:
         await asyncio.sleep(1)
 
