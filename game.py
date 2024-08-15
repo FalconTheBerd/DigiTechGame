@@ -1,9 +1,28 @@
 import asyncio
+import shutil
+import sys
 from pyppeteer import launch
 
+async def find_chrome_executable():
+    # Define common installation paths
+    possible_paths = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+    ]
+
+    # Check if chrome.exe exists in the common paths
+    for path in possible_paths:
+        if shutil.which(path):
+            return path
+
+    # If not found, exit the script with an error
+    print("Chrome executable not found. Please install Google Chrome.")
+    sys.exit(1)
+
 async def main():
-    executable_path = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
-    
+    # Find the chrome.exe path automatically
+    executable_path = await find_chrome_executable()
+
     # Set the URL you want to open directly
     target_url = 'https://falcontheberd.github.io/DigiTechGame/'  # Replace with your desired URL
     
@@ -32,20 +51,12 @@ async def main():
         "height": screen_height,
     })
 
-    # Perform any localStorage operations or other interactions here
-    await page.evaluate('''() => {
-        localStorage.setItem('myKey', 'myValue');
-    }''')
-    
-    local_storage_value = await page.evaluate('''() => {
-        return localStorage.getItem('myKey');
-    }''')
-    
-    print(f"Value from localStorage: {local_storage_value}")
+    # Monitor browser pages and close the script when all pages are closed
+    while len(await browser.pages()) > 0:
+        await asyncio.sleep(1)
 
-    # Keep the browser running indefinitely
-    while True:
-        await asyncio.sleep(3600)  # Sleep for 1 hour in a loop, effectively keeping it running indefinitely
+    # Close the browser once all pages are closed
+    await browser.close()
 
 # Run the async function
 asyncio.get_event_loop().run_until_complete(main())
