@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         fireball.style.top = `${playerCenterY}px`;
         fireball.style.left = `${playerCenterX}px`;
         document.body.appendChild(fireball);
-    
+
         const speed = 10;
     
         function moveFireball() {
@@ -399,8 +399,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
                     const waveTop = parseInt(wave.style.top);
                     const waveLeft = parseInt(wave.style.left);
-                    wave.style.top = `${waveTop + speed * Math.sin(angle)}px`;
-                    wave.style.left = `${waveLeft + speed * Math.cos(angle)}px`;
+					wave.style.top = `${waveTop + speed * Math.sin(angle)}px`;
+            		wave.style.left = `${waveLeft + speed * Math.cos(angle)}px`;
+
     
                     // Check for collision with enemies
                     document.querySelectorAll('.enemy').forEach(enemy => {
