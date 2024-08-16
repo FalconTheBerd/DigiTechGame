@@ -38,6 +38,22 @@ html {
     border-radius: 50%;
     top: calc(50% - 60px);
     left: calc(50% - 60px);
+    animation: shieldAnimation 1s ease-in-out infinite;
+}
+
+@keyframes shieldAnimation {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
 }
 
 .tooltip {
@@ -110,13 +126,152 @@ html {
     height: 10px;
 }
 
+
 .fireball {
     width: 20px;
     height: 20px;
+    animation: fireballAnimation 1s linear infinite;
+}
+
+@keyframes fireballAnimation {
+    0% {
+        transform: scale(1);
+        background-color: rgba(255, 69, 0, 0.8);
+        box-shadow: 0 0 15px rgba(255, 69, 0, 0.8);
+    }
+    50% {
+        transform: scale(1.2);
+        background-color: rgba(255, 140, 0, 0.8); /* Slightly lighter color */
+        box-shadow: 0 0 20px rgba(255, 140, 0, 0.8);
+    }
+    100% {
+        transform: scale(1);
+        background-color: rgba(255, 69, 0, 0.8);
+        box-shadow: 0 0 15px rgba(255, 69, 0, 0.8);
+    }
 }
 
 .flameWave {
     width: 50px;
     height: 50px;
     transform: rotate(45deg);
+    animation: flameWaveAnimation 0.5s linear infinite;
 }
+
+@keyframes flameWaveAnimation {
+    0% {
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2, 1.2);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+}
+
+.iceBlast {
+    width: 20px;
+    height: 20px;
+    background-color: rgba(173, 216, 230, 0.8); /* Light blue color */
+    border-radius: 50%; /* Makes the blast circular */
+    box-shadow: 0 0 10px rgba(173, 216, 230, 0.8); /* Adds a glowing effect */
+    position: absolute; /* Ensures it can move around the screen */
+    pointer-events: none; /* Prevents it from blocking mouse events */
+    z-index: 1000; /* Keeps it above most other elements */
+    animation: iceBlastAnimation 1s linear infinite;
+}
+
+/* Optional: Add an animation for the blast */
+@keyframes iceBlastAnimation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(2.0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.frostNova {
+    width: 100px;
+    height: 100px;
+    background-color: rgba(173, 216, 230, 0.5);
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(173, 216, 230, 0.8);
+    position: absolute;
+    pointer-events: none;
+    z-index: 1000;
+    animation: frostNovaExpandPulse 3s ease-out infinite, frostNovaFadePulse 3s ease-out infinite;
+}
+
+/* Animation to expand the Frost Nova in pulses */
+@keyframes frostNovaExpandPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(2);  /* Adjust the scale as needed */
+    }
+    100% {
+        transform: scale(1);  /* Returns to original size for the pulse effect */
+    }
+}
+
+/* Animation to fade in and out the Frost Nova */
+@keyframes frostNovaFadePulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;  /* Fade to partial transparency */
+    }
+    100% {
+        opacity: 1;  /* Back to full opacity for the next pulse */
+    }
+}
+
+.chillingAura {
+    width: 100px;
+    height: 100px;
+    background-color: rgba(0, 191, 255, 0.3); /* Light blue, semi-transparent */
+    border-radius: 50%;
+    box-shadow: 0 0 25px rgba(0, 191, 255, 0.5); /* Glowing blue effect */
+    position: absolute;
+    pointer-events: none;
+    z-index: 999;
+    animation: chillingAuraAnimation 1s ease-in-out infinite;
+}
+
+@keyframes chillingAuraAnimation {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+.glacierStrike {
+    width: 50px;  /* Much wider to represent a large glacier */
+    height: 300px;  /* Taller to represent the glacier's height */
+    background-color: rgba(135, 206, 235, 0.9); /* Light blue, semi-transparent */
+    border-radius: 20px;  /* Less rounded to give it a more blocky, glacier-like shape */
+    box-shadow: 0 0 20px rgba(135, 206, 235, 0.8); /* Glowing effect to enhance presence */
+    position: absolute;
+    z-index: 1000;
+    transform: rotate(45deg); /* Rotate slightly to make it look more dynamic */
+}
+
+
