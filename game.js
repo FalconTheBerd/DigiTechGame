@@ -305,10 +305,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.body.appendChild(fireball);
 
         const speed = 10;
+    	const deltaY = mouseY - playerCenterY;
+        const deltaX = mouseX - playerCenterX;
     
-        function moveFireball() {
-            const fireballTop = parseInt(fireball.style.top);
-            const fireballLeft = parseInt(fireball.style.left);
+        const offsetAngle = Math.atan2(deltaY, deltaX) + (Math.random() - 0.5) * 0.2;
+  
+    	function moveFireball() {
+        	let fireballTop = parseFloat(fireball.style.top);
+        	let fireballLeft = parseFloat(fireball.style.left);
+    
+            fireballTop += speed * Math.sin(offsetAngle);
+            fireballLeft += speed * Math.cos(offsetAngle);       
+            
             fireball.style.top = `${fireballTop + speed * Math.sin(angle)}px`;
             fireball.style.left = `${fireballLeft + speed * Math.cos(angle)}px`;
     
