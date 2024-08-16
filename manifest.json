@@ -1,0 +1,22 @@
+{
+    "name": "Vulgarian Vengeance",
+    "short_name": "DigiTech",
+    "description": "A fun and exciting game built for the web.",
+    "start_url": "/DigiTechGame/index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#000000",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/DigiTechGame/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/DigiTechGame/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
