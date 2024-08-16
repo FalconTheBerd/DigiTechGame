@@ -402,11 +402,35 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (!shield) {
             shield = document.createElement('div');
             shield.className = 'thermalShield';
-            player.appendChild(shield);
+            document.body.appendChild(shield);
         }
-
+    
+        const updateShieldPosition = () => {
+            const playerRect = player.getBoundingClientRect();
+            const playerCenterX = playerRect.left + playerRect.width / 2;
+            const playerCenterY = playerRect.top + playerRect.height / 2;
+    
+            // Position the shield based on the player's center
+            shield.style.position = 'absolute';
+            shield.style.top = `${playerCenterY - shield.clientHeight / 2}px`;
+            shield.style.left = `${playerCenterX - shield.clientWidth / 2}px`;
+        };
+    
+        // Set the initial position of the shield
+        updateShieldPosition();
+    
+        // Update the shield position as the player moves
+        const moveShieldWithPlayer = () => {
+            updateShieldPosition();
+            if (shield.dataset.active === 'true') {
+                requestAnimationFrame(moveShieldWithPlayer);
+            }
+        };
+    
         shield.dataset.active = 'true';
-
+    
+        moveShieldWithPlayer();
+    
         setTimeout(() => {
             if (shield) {
                 shield.dataset.active = 'false';
@@ -414,6 +438,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         }, 4000);
     }
+    
 
     function flameWave(event) {
         const playerRect = player.getBoundingClientRect();

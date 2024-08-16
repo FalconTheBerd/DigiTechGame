@@ -30,16 +30,18 @@ html {
 }
 
 .thermalShield {
-    width: 1200px;
-    height: 120px;
-    background-color: rgba(255, 255, 0, 0.5);
-    border: 2px solid rgba(255, 255, 0, 0.8);
-    box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
-    border-radius: 50%;
-    top: calc(50% - 60px);
-    left: calc(50% - 60px);
-    animation: shieldAnimation 1s ease-in-out infinite;
+    width: 150px; /* Adjust the size as needed */
+    height: 150px;
+    background-color: rgba(255, 69, 0, 0.3); /* Semi-transparent red/orange */
+    border-radius: 50%; /* Circular shield */
+    box-shadow: 0 0 25px rgba(255, 69, 0, 0.5); /* Glowing effect */
+    position: absolute; /* Positioning relative to the viewport */
+    pointer-events: none; /* Prevent the shield from blocking interactions */
+    z-index: 1000; /* Keep the shield on top of other elements */
+    animation: thermalShieldAnimation 1s ease-in-out infinite;
 }
+
+
 
 @keyframes shieldAnimation {
     0% {
