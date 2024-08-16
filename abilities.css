@@ -1,0 +1,150 @@
+.thermalShield {
+    width: 150px;
+    height: 150px;
+    background-color: rgba(255, 69, 0, 0.3);
+    border-radius: 50%;
+    box-shadow: 0 0 25px rgba(255, 69, 0, 0.5);
+    position: absolute;
+    pointer-events: none;
+    z-index: 1000;
+    animation: thermalShieldAnimation 1s ease-in-out infinite;
+}
+
+@keyframes thermalShieldAnimation {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+.flame,
+.fireball,
+.flameWave {
+    position: absolute;
+    background-color: orange;
+    border: 2px solid rgba(255, 255, 0, 0.8);
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+    border-radius: 50%;
+}
+
+.flame {
+    width: 10px;
+    height: 10px;
+}
+
+.fireball {
+    width: 20px;
+    height: 20px;
+}
+
+.flameWave {
+    width: 50px;
+    height: 50px;
+    transform: rotate(45deg);
+}
+
+.iceBlast {
+    width: 20px;
+    height: 20px;
+    background-color: rgba(173, 216, 230, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(173, 216, 230, 0.8);
+    position: absolute;
+    pointer-events: none;
+    z-index: 1000;
+    animation: iceBlastAnimation 1s linear infinite;
+}
+
+@keyframes iceBlastAnimation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(2.0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.frostNova {
+    width: 100px;
+    height: 100px;
+    background-color: rgba(173, 216, 230, 0.5);
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(173, 216, 230, 0.8);
+    position: absolute;
+    pointer-events: none;
+    z-index: 1000;
+    animation: frostNovaExpandPulse 3s ease-out infinite, frostNovaFadePulse 3s ease-out infinite;
+}
+
+@keyframes frostNovaExpandPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes frostNovaFadePulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.chillingAura {
+    width: 150px;
+    height: 150px;
+    background-color: rgba(0, 191, 255, 0.3);
+    border-radius: 50%;
+    box-shadow: 0 0 25px rgba(0, 191, 255, 0.5);
+    position: absolute;
+    pointer-events: none;
+    z-index: 999;
+    animation: chillingAuraAnimation 1s ease-in-out infinite;
+}
+
+@keyframes chillingAuraAnimation {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+.glacierStrike {
+    width: 50px;
+    height: 300px;
+    background-color: rgba(135, 206, 235, 0.9);
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(135, 206, 235, 0.8);
+    position: absolute;
+    z-index: 1000;
+    transform: rotate(45deg);
+}
