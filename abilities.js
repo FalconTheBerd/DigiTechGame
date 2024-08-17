@@ -1,15 +1,35 @@
-let mouseX, mouseY;
-
-// Capture the mouse position
-document.addEventListener('mousemove', (event) => {
-    mouseX = event.clientX;
-    mouseY = event.clientY;
-});
+let lastMouseX, lastMouseY;
 
 let inventory = JSON.parse(localStorage.getItem('inventory')) || {};
 
+let vulgarian = localStorage.getItem('vulgarian');
+
+// Capture the mouse or touch position
+function updateMousePosition(event) {
+    if (event.touches) {
+        lastMouseX = event.touches[0].clientX;
+        lastMouseY = event.touches[0].clientY;
+    } else {
+        lastMouseX = event.clientX;
+        lastMouseY = event.clientY;
+    }
+}
+
+document.addEventListener('mousemove', updateMousePosition);
+document.addEventListener('touchmove', updateMousePosition);
+
+function disableMouseMove() {
+    document.removeEventListener('mousemove', updateMousePosition);
+    document.removeEventListener('touchmove', updateMousePosition);
+}
+
+function enableMouseMove() {
+    document.addEventListener('mousemove', updateMousePosition);
+    document.addEventListener('touchmove', updateMousePosition);
+}
+
 function dropItem(enemy) {
-    const itemTypes = ['Gold', 'Ice Heart', 'Temperature Stabiliser', 'Exo Suit Part']; // Example item types
+    const itemTypes = ['Gold', 'Ice Heart', 'Temperature Stabiliser', 'Exo Suit Part'];
     const randomItem = itemTypes[Math.floor(Math.random() * itemTypes.length)];
     let amount = 1;
 
@@ -39,13 +59,11 @@ function dropItem(enemy) {
     }
 }
 
-// Common utility functions
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Ember's Abilities
-function flameBarrage(event) {
+function flameBarrage() {
     const playerRect = player.getBoundingClientRect();
     const playerCenterX = playerRect.left + playerRect.width / 2;
     const playerCenterY = playerRect.top + playerRect.height / 2;
@@ -59,8 +77,8 @@ function flameBarrage(event) {
         document.body.appendChild(flame);
 
         const speed = 5;
-        const deltaY = mouseY - playerCenterY;
-        const deltaX = mouseX - playerCenterX;
+        const deltaY = lastMouseY - playerCenterY;
+        const deltaX = lastMouseX - playerCenterX;
 
         const offsetAngle = Math.atan2(deltaY, deltaX) + (Math.random() - 0.5) * 0.2;
 
@@ -76,7 +94,6 @@ function flameBarrage(event) {
 
             let hit = false;
 
-            // Check for collision with enemies
             document.querySelectorAll('.enemy').forEach(enemy => {
                 if (hit) return;
                 const enemyRect = enemy.getBoundingClientRect();
@@ -90,7 +107,6 @@ function flameBarrage(event) {
                 }
             });
 
-            // Check for collision with bosses
             if (!hit) {
                 document.querySelectorAll('.boss').forEach(boss => {
                     if (hit) return;
@@ -98,7 +114,7 @@ function flameBarrage(event) {
                     if (flameTop >= bossRect.top && flameTop <= bossRect.bottom &&
                         flameLeft >= bossRect.left && flameLeft <= bossRect.right) {
                         console.log('Flame Barrage hit a boss');
-                        boss.takeDamage(5); // Adjust the damage as needed
+                        boss.takeDamage(5);
                         hit = true;
                         flame.remove();
                     }
@@ -116,8 +132,12 @@ function flameBarrage(event) {
     }
 }
 
+document.getElementById('ability1').addEventListener('click', function (event) {
+    event.preventDefault();
+    useAbility('flameBarrage');
+});
+
 function showItemPopup(item, amount = 1) {
-    // Create or select the popup container
     let popupContainer = document.getElementById('popupContainer');
     if (!popupContainer) {
         popupContainer = document.createElement('div');
@@ -130,7 +150,6 @@ function showItemPopup(item, amount = 1) {
         document.body.appendChild(popupContainer);
     }
 
-    // Create a new popup item
     const popup = document.createElement('div');
     popup.className = 'item-popup';
     popup.style.marginBottom = '5px';
@@ -140,37 +159,32 @@ function showItemPopup(item, amount = 1) {
     popup.style.borderRadius = '5px';
     popup.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
 
-    // Set the popup text based on the item
     if (item === 'Gold') {
         popup.textContent = `You got: ${amount} Gold`;
     } else {
         popup.textContent = `You got: ${item}`;
     }
 
-    // Append the popup to the container
     popupContainer.appendChild(popup);
 
-    // Show the popup
     setTimeout(() => {
         popup.classList.add('show');
     }, 10);
 
-    // Hide the popup after 2 seconds
     setTimeout(() => {
         popup.remove();
-        // If the container is empty, remove it
         if (popupContainer.childNodes.length === 0) {
             popupContainer.remove();
         }
     }, 2000);
 }
 
-function fireball(event) {
+function fireball() {
     const playerRect = player.getBoundingClientRect();
     const playerCenterX = playerRect.left + playerRect.width / 2;
     const playerCenterY = playerRect.top + playerRect.height / 2;
 
-    const angle = Math.atan2(mouseY - playerCenterY, mouseX - playerCenterX);
+    const angle = Math.atan2(lastMouseY - playerCenterY, lastMouseX - playerCenterX);
 
     const fireball = document.createElement('div');
     fireball.className = 'fireball';
@@ -189,7 +203,6 @@ function fireball(event) {
 
         let hit = false;
 
-        // Check for collision with enemies
         document.querySelectorAll('.enemy').forEach(enemy => {
             if (hit) return;
             const enemyRect = enemy.getBoundingClientRect();
@@ -203,7 +216,6 @@ function fireball(event) {
             }
         });
 
-        // Check for collision with bosses
         if (!hit) {
             document.querySelectorAll('.boss').forEach(boss => {
                 if (hit) return;
@@ -211,7 +223,7 @@ function fireball(event) {
                 if (fireballTop >= bossRect.top && fireballTop <= bossRect.bottom &&
                     fireballLeft >= bossRect.left && fireballLeft <= bossRect.right) {
                     console.log('Fireball hit a boss');
-                    boss.takeDamage(30); // Adjust the damage as needed
+                    boss.takeDamage(30);
                     hit = true;
                     fireball.remove();
                 }
@@ -241,16 +253,13 @@ function thermalShield() {
         const playerCenterX = playerRect.left + playerRect.width / 2;
         const playerCenterY = playerRect.top + playerRect.height / 2;
 
-        // Position the shield based on the player's center
         shield.style.position = 'absolute';
         shield.style.top = `${playerCenterY - shield.clientHeight / 2}px`;
         shield.style.left = `${playerCenterX - shield.clientWidth / 2}px`;
     };
 
-    // Set the initial position of the shield
     updateShieldPosition();
 
-    // Update the shield position as the player moves
     const moveShieldWithPlayer = () => {
         updateShieldPosition();
         if (shield.dataset.active === 'true') {
@@ -270,12 +279,12 @@ function thermalShield() {
     }, 4000);
 }
 
-function flameWave(event) {
+function flameWave() {
     const playerRect = player.getBoundingClientRect();
     const playerCenterX = playerRect.left + playerRect.width / 2;
     const playerCenterY = playerRect.top + playerRect.height / 2;
 
-    const angle = Math.atan2(mouseY - playerCenterY, mouseX - playerCenterX);
+    const angle = Math.atan2(lastMouseY - playerCenterY, lastMouseX - playerCenterX);
 
     for (let i = 0; i < 5; i++) {
         const wave = document.createElement('div');
@@ -296,7 +305,6 @@ function flameWave(event) {
 
                 let hit = false;
 
-                // Check for collision with enemies
                 document.querySelectorAll('.enemy').forEach(enemy => {
                     if (hit) return;
                     const enemyRect = enemy.getBoundingClientRect();
@@ -310,7 +318,6 @@ function flameWave(event) {
                     }
                 });
 
-                // Check for collision with bosses
                 if (!hit) {
                     document.querySelectorAll('.boss').forEach(boss => {
                         if (hit) return;
@@ -318,7 +325,7 @@ function flameWave(event) {
                         if (waveTop >= bossRect.top && waveTop <= bossRect.bottom &&
                             waveLeft >= bossRect.left && waveLeft <= bossRect.right) {
                             console.log('Flame Wave hit a boss');
-                            boss.takeDamage(25); // Adjust the damage as needed
+                            boss.takeDamage(25);
                             hit = true;
                             wave.remove();
                         }
@@ -337,12 +344,12 @@ function flameWave(event) {
     }
 }
 
-function iceBlast(event) {
+function iceBlast() {
     const playerRect = player.getBoundingClientRect();
     const playerCenterX = playerRect.left + playerRect.width / 2;
     const playerCenterY = playerRect.top + playerRect.height / 2;
 
-    const angle = Math.atan2(mouseY - playerCenterY, mouseX - playerCenterX);
+    const angle = Math.atan2(lastMouseY - playerCenterY, lastMouseX - playerCenterX);
 
     const iceBlast = document.createElement('div');
     iceBlast.className = 'iceBlast';
@@ -361,7 +368,6 @@ function iceBlast(event) {
 
         let hit = false;
 
-        // Check for collision with enemies
         document.querySelectorAll('.enemy').forEach(enemy => {
             if (hit) return;
             const enemyRect = enemy.getBoundingClientRect();
@@ -375,7 +381,6 @@ function iceBlast(event) {
             }
         });
 
-        // Check for collision with bosses
         if (!hit) {
             document.querySelectorAll('.boss').forEach(boss => {
                 if (hit) return;
@@ -383,7 +388,7 @@ function iceBlast(event) {
                 if (iceBlastTop >= bossRect.top && iceBlastTop <= bossRect.bottom &&
                     iceBlastLeft >= bossRect.left && iceBlastLeft <= bossRect.right) {
                     console.log(`Ice Blast hit the boss at (${iceBlastLeft}, ${iceBlastTop})`);
-                    boss.takeDamage(25); // Adjust the damage as needed
+                    boss.takeDamage(25);
                     hit = true;
                     iceBlast.remove();
                 }
@@ -400,14 +405,14 @@ function iceBlast(event) {
     requestAnimationFrame(moveIceBlast);
 }
 
-function frostNova(event) {
+function frostNova() {
     console.log('Using Frost Nova');
 
     const frostNova = document.createElement('div');
     frostNova.className = 'frostNova';
     frostNova.style.position = 'absolute';
-    frostNova.style.top = `${mouseY - 50}px`;
-    frostNova.style.left = `${mouseX - 50}px`;
+    frostNova.style.top = `${lastMouseY - 50}px`;
+    frostNova.style.left = `${lastMouseX - 50}px`;
     document.body.appendChild(frostNova);
 
     const radius = 100;
@@ -421,15 +426,13 @@ function frostNova(event) {
     const damageInterval = setInterval(() => {
         timeElapsed += intervalDuration;
 
-        // Increase damage over time
         const currentDamage = baseDamage + rampUpRate * (timeElapsed / intervalDuration);
 
-        // Apply damage to all enemies in the radius
         document.querySelectorAll('.enemy').forEach(enemy => {
             const enemyRect = enemy.getBoundingClientRect();
             const distance = Math.sqrt(
-                Math.pow(enemyRect.left + enemyRect.width / 2 - mouseX, 2) +
-                Math.pow(enemyRect.top + enemyRect.height / 2 - mouseY, 2)
+                Math.pow(enemyRect.left + enemyRect.width / 2 - lastMouseX, 2) +
+                Math.pow(enemyRect.top + enemyRect.height / 2 - lastMouseY, 2)
             );
 
             if (distance <= radius) {
@@ -439,17 +442,16 @@ function frostNova(event) {
             }
         });
 
-        // Apply damage to bosses within the radius
         document.querySelectorAll('.boss').forEach(boss => {
             const bossRect = boss.getBoundingClientRect();
             const distance = Math.sqrt(
-                Math.pow(bossRect.left + bossRect.width / 2 - mouseX, 2) +
-                Math.pow(bossRect.top + bossRect.height / 2 - mouseY, 2)
+                Math.pow(bossRect.left + bossRect.width / 2 - lastMouseX, 2) +
+                Math.pow(bossRect.top + bossRect.height / 2 - lastMouseY, 2)
             );
 
             if (distance <= radius) {
                 console.log(`Frost Nova hit the boss at (${bossRect.left}, ${bossRect.top})`);
-                boss.takeDamage(currentDamage); // Adjust damage calculation as needed
+                boss.takeDamage(currentDamage);
             }
         });
 
@@ -473,16 +475,13 @@ function chillingAura() {
         const playerCenterX = playerRect.left + playerRect.width / 2;
         const playerCenterY = playerRect.top + playerRect.height / 2;
 
-        // Position the aura based on the player's center
         aura.style.position = 'absolute';
         aura.style.top = `${playerCenterY - aura.clientHeight / 2}px`;
         aura.style.left = `${playerCenterX - aura.clientWidth / 2}px`;
     };
 
-    // Set the initial position of the aura
     updateAuraPosition();
 
-    // Update the aura position as the player moves
     const moveAuraWithPlayer = () => {
         updateAuraPosition();
         if (aura.dataset.active === 'true') {
@@ -502,12 +501,12 @@ function chillingAura() {
     }, 4000);
 }
 
-function glacierStrike(event) {
+function glacierStrike() {
     const playerRect = player.getBoundingClientRect();
     const playerCenterX = playerRect.left + playerRect.width / 2;
     const playerCenterY = playerRect.top + playerRect.height / 2;
 
-    const angle = Math.atan2(mouseY - playerCenterY, mouseX - playerCenterX);
+    const angle = Math.atan2(lastMouseY - playerCenterY, lastMouseX - playerCenterX);
 
     const glacierStrike = document.createElement('div');
     glacierStrike.className = 'glacierStrike';
@@ -533,7 +532,6 @@ function glacierStrike(event) {
 
         let hit = false;
 
-        // Check for collision with enemies
         document.querySelectorAll('.enemy').forEach(enemy => {
             if (hit) return;
             const enemyRect = enemy.getBoundingClientRect();
@@ -547,7 +545,6 @@ function glacierStrike(event) {
             }
         });
 
-        // Check for collision with bosses
         if (!hit) {
             document.querySelectorAll('.boss').forEach(boss => {
                 if (hit) return;
@@ -555,7 +552,7 @@ function glacierStrike(event) {
                 if (glacierStrikeTop >= bossRect.top && glacierStrikeTop <= bossRect.bottom &&
                     glacierStrikeLeft >= bossRect.left && glacierStrikeLeft <= bossRect.right) {
                     console.log(`Glacier Strike hit the boss at (${glacierStrikeLeft}, ${glacierStrikeTop})`);
-                    boss.takeDamage(40); // Adjust the damage as needed
+                    boss.takeDamage(40);
                     hit = true;
                     glacierStrike.remove();
                 }
@@ -638,7 +635,7 @@ const abilityUIElements = {
     glacierStrike: document.getElementById('cooldown4')
 };
 
-function useAbility(abilityName, event) {
+function useAbility(abilityName) {
     const vulgarian = localStorage.getItem('vulgarian');
     const characterAbilities = abilities[vulgarian];
 
@@ -658,7 +655,7 @@ function useAbility(abilityName, event) {
 
     if (currentTime - ability.lastUsed >= ability.cooldown) {
         ability.lastUsed = currentTime;
-        ability.action(event);
+        ability.action();
         startCooldown(abilityName, ability.cooldown);
     } else {
         console.log(`${abilityName} is on cooldown.`);
@@ -685,3 +682,36 @@ function startCooldown(abilityName, cooldown) {
         console.error(`Cooldown element for ${abilityName} not found`);
     }
 }
+
+document.getElementById('ability1').addEventListener('click', function (event) {
+    event.preventDefault();
+    if (vulgarian === 'Ember') {
+        useAbility('flameBarrage');
+    } else if (vulgarian === 'Frostbite') {
+        useAbility('iceBlast');
+    }
+});
+
+document.getElementById('ability2').addEventListener('click', function () {
+    if (vulgarian === 'Ember') {
+        useAbility('fireball');
+    } else if (vulgarian === 'Frostbite') {
+        useAbility('frostNova');
+    }
+});
+
+document.getElementById('ability3').addEventListener('click', function () {
+    if (vulgarian === 'Ember') {
+        useAbility('thermalShield');
+    } else if (vulgarian === 'Frostbite') {
+        useAbility('chillingAura');
+    }
+});
+
+document.getElementById('ability4').addEventListener('click', function () {
+    if (vulgarian === 'Ember') {
+        useAbility('flameWave');
+    } else if (vulgarian === 'Frostbite') {
+        useAbility('glacierStrike');
+    }
+});

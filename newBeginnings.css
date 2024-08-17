@@ -81,6 +81,7 @@ html {
     font-size: 16px;
     opacity: 0;
     transition: opacity 0.5s;
+    pointer-events: none; /* This allows touch events to pass through to the parent .ability div */
 }
 
 .enemy {
