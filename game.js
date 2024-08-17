@@ -137,9 +137,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         requestAnimationFrame(movePlayer);
     }
-
-    // Function `useAbility`, `startCooldown`, etc., are now from abilities.js
-
+    
     function createDungeonNode(name, top, left, estimatedTime, page) {
         const dungeonNode = document.createElement('div');
         dungeonNode.className = 'dungeonNode';
@@ -149,7 +147,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         dungeonNode.style.position = 'absolute';
         dungeonNode.style.top = `${top}px`;
         dungeonNode.style.left = `${left}px`;
-
+    
         const tooltip = document.createElement('div');
         tooltip.className = 'tooltip';
         tooltip.style.position = 'absolute';
@@ -160,17 +158,30 @@ document.addEventListener('DOMContentLoaded', (event) => {
         tooltip.style.display = 'none';
         tooltip.textContent = `Dungeon: ${name}\nEstimated Time: ${estimatedTime}`;
         document.body.appendChild(tooltip);
-
+    
         dungeonNode.addEventListener('mouseover', () => {
             tooltip.style.display = 'block';
-            tooltip.style.top = `${parseInt(dungeonNode.style.top) - 40}px`;
-            tooltip.style.left = `${parseInt(dungeonNode.style.left) + 60}px`;
+            const nodeTop = parseInt(dungeonNode.style.top);
+            const nodeLeft = parseInt(dungeonNode.style.left);
+            tooltip.style.top = `${nodeTop - 40}px`;
+    
+            const tooltipWidth = tooltip.offsetWidth;
+            const screenWidth = window.innerWidth;
+            const rightEdge = nodeLeft + 60 + tooltipWidth;
+    
+            if (rightEdge > screenWidth) {
+                // Position the tooltip to the left of the dungeon node
+                tooltip.style.left = `${nodeLeft - tooltipWidth - 10}px`;
+            } else {
+                // Position the tooltip to the right of the dungeon node
+                tooltip.style.left = `${nodeLeft + 60}px`;
+            }
         });
-
+    
         dungeonNode.addEventListener('mouseout', () => {
             tooltip.style.display = 'none';
         });
-
+    
         dungeonNode.addEventListener('click', () => {
             if (isLocal) {
                 window.location.href = `${page}.html`;
@@ -178,13 +189,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 window.location.href = `/DigiTechGame/${page}.html`;
             }
         });
-
+    
         document.body.appendChild(dungeonNode);
     }
+    
 
-    createDungeonNode('New Beginnings', 200, 50, '1 min', 'newBeginnings');
-    createDungeonNode('Ancient Ruins', 400, 50, '30 mins', 'ancientRuins');
-    createDungeonNode('Haunted Forest', 600, 50, '25 mins', 'hauntedForest');
+    createDungeonNode('New Beginnings', 250, 50, '1 min', 'newBeginnings');
+    createDungeonNode('Ancient Ruins', 520, 50, '30 mins', 'ancientRuins');
+    createDungeonNode('Haunted Forest', 790, 50, '25 mins', 'hauntedForest');
+    createDungeonNode('Return to Title', 520, 1800, 'N/A', 'index');
 
     requestAnimationFrame(movePlayer);
 });

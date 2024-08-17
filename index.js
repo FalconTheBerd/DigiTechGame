@@ -1,5 +1,27 @@
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
+window.addEventListener('load', function() {
+    if (isMobileDevice()) {
+        if (isStandalone()) {
+            console.log('Running in standalone mode on a mobile device')
+        } else {
+            if (isLocal) {
+                window.location.href = `webapp.html`;
+            } else {
+                window.location.href = `/DigiTechGame/webapp.html`;
+            }
+        }
+    }
+});
+
+function isMobileDevice() {
+    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
+
+function isStandalone() {
+    return (window.navigator.standalone === true) || (window.matchMedia('(display-mode: standalone)').matches);
+}
+
 if (!localStorage.getItem('vulgarian')){
     localStorage.setItem('vulgarian', 'Ember');
 
