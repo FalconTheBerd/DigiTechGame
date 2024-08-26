@@ -4,6 +4,66 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     let mouseX, mouseY;
 
+    const isFirstTime = !localStorage.getItem('firstTimePlayed');
+
+    if (isFirstTime) {
+        showTutorialOverlay();
+    }
+
+    function showTutorialOverlay() {
+        const overlay = document.createElement('div');
+        overlay.id = 'tutorial-overlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        overlay.style.color = 'white';
+        overlay.style.display = 'flex';
+        overlay.style.flexDirection = 'column';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = 1000;
+
+        const tutorialContent = document.createElement('div');
+        tutorialContent.style.textAlign = 'center';
+        tutorialContent.innerHTML = `
+            <h1>Welcome to Vulgarian Vengeance!</h1>
+            <p>Use the following keys to activate your abilities:</p>
+            <ul style="list-style: none;">
+                <li><strong>Q</strong>: Use Ability 1</li>
+                <li><strong>X</strong>: Use Ability 2</li>
+                <li><strong>C</strong>: Use Ability 3</li>
+                <li><strong>V</strong>: Use Ability 4</li>
+            </ul>
+            <p>The goal of this mission is simple:</p>
+            <p><strong>Kill enemies to progress and defeat the boss!</strong></p>
+            <button id="close-tutorial" style="margin-top: 20px; padding: 10px 20px; font-size: 16px;">Start Game</button>
+        `;
+
+        overlay.appendChild(tutorialContent);
+        document.body.appendChild(overlay);
+
+        const closeTutorialButton = document.getElementById('close-tutorial');
+        closeTutorialButton.style.backgroundColor = 'rgba(239,239,239, 0.8)';
+
+        closeTutorialButton.addEventListener('mouseover', () => {
+            closeTutorialButton.style.backgroundColor = 'rgba(183, 183, 183, 0.8)';
+        });
+        
+        closeTutorialButton.addEventListener('mouseout', () => {
+            closeTutorialButton.style.backgroundColor = 'rgba(239,239,239, 0.8)';
+        });
+        
+
+        document.getElementById('close-tutorial').addEventListener('click', () => {
+            localStorage.setItem('firstTimePlayed', 'true');
+            overlay.remove();
+            startGame(); // Start the game after the tutorial is dismissed
+        });
+    }
+
     // Capture the mouse position
     document.addEventListener('mousemove', (event) => {
         mouseX = event.clientX;
@@ -429,5 +489,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     updateHealthBar();
 
     // Start the game with waves and boss
-    startGame();
+    if (!isFirstTime) {
+        startGame(); // Start the game immediately if it's not the first time
+    }
 });

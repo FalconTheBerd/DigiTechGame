@@ -138,15 +138,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
         requestAnimationFrame(movePlayer);
     }
     
-    function createDungeonNode(name, top, left, estimatedTime, page) {
+    function createDungeonNode(name, topPercent, leftPercent, estimatedTime, page) {
         const dungeonNode = document.createElement('div');
         dungeonNode.className = 'dungeonNode';
         dungeonNode.style.width = '50px';
         dungeonNode.style.height = '50px';
         dungeonNode.style.backgroundColor = 'blue';
         dungeonNode.style.position = 'absolute';
-        dungeonNode.style.top = `${top}px`;
-        dungeonNode.style.left = `${left}px`;
+        dungeonNode.style.top = `${topPercent}vh`;
+        dungeonNode.style.left = `${leftPercent}vw`;
     
         const tooltip = document.createElement('div');
         tooltip.className = 'tooltip';
@@ -161,20 +161,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
         dungeonNode.addEventListener('mouseover', () => {
             tooltip.style.display = 'block';
-            const nodeTop = parseInt(dungeonNode.style.top);
-            const nodeLeft = parseInt(dungeonNode.style.left);
-            tooltip.style.top = `${nodeTop - 40}px`;
+            const nodeTop = parseFloat(dungeonNode.style.top);
+            const nodeLeft = parseFloat(dungeonNode.style.left);
+            tooltip.style.top = `${nodeTop - 4}vh`;
     
             const tooltipWidth = tooltip.offsetWidth;
             const screenWidth = window.innerWidth;
-            const rightEdge = nodeLeft + 60 + tooltipWidth;
+            const rightEdge = (nodeLeft + 6) / 100 * screenWidth + tooltipWidth;
     
             if (rightEdge > screenWidth) {
                 // Position the tooltip to the left of the dungeon node
-                tooltip.style.left = `${nodeLeft - tooltipWidth - 10}px`;
+                tooltip.style.left = `${nodeLeft - tooltipWidth / screenWidth * 100 - 1}vw`;
             } else {
                 // Position the tooltip to the right of the dungeon node
-                tooltip.style.left = `${nodeLeft + 60}px`;
+                tooltip.style.left = `${nodeLeft + 6}vw`;
             }
         });
     
@@ -193,11 +193,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.body.appendChild(dungeonNode);
     }
     
-
-    createDungeonNode('New Beginnings', 250, 50, '1 min', 'newBeginnings');
-    createDungeonNode('Ancient Ruins', 520, 50, '30 mins', 'ancientRuins');
-    createDungeonNode('Haunted Forest', 790, 50, '25 mins', 'hauntedForest');
-    createDungeonNode('Return to Title', 520, 1800, 'N/A', 'index');
+    // Usage example with viewport units
+    createDungeonNode('New Beginnings', 25, 5, '1 min', 'newBeginnings');
+    createDungeonNode('Ancient Ruins', 47, 5, '30 mins', 'ancientRuins');
+    createDungeonNode('Haunted Forest', 69, 5, '25 mins', 'hauntedForest');
+    createDungeonNode('Return to Title', 47, 95, 'N/A', 'index');    
 
     requestAnimationFrame(movePlayer);
 });
