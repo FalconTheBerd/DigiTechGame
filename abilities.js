@@ -401,13 +401,17 @@ function iceBlast(event) {
 }
 
 function frostNova(event) {
+    
+    let frostNovaMouseX = mouseX;
+    let frostNoveMouseY = mouseY;
+    
     console.log('Using Frost Nova');
 
     const frostNova = document.createElement('div');
     frostNova.className = 'frostNova';
     frostNova.style.position = 'absolute';
-    frostNova.style.top = `${mouseY - 50}px`;
-    frostNova.style.left = `${mouseX - 50}px`;
+    frostNova.style.top = `${frostNovaMouseY - 50}px`;
+    frostNova.style.left = `${frostNovaMouseX - 50}px`;
     document.body.appendChild(frostNova);
 
     const radius = 100;
