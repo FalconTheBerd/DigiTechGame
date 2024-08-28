@@ -403,7 +403,7 @@ function iceBlast(event) {
 function frostNova(event) {
     
     let frostNovaMouseX = mouseX;
-    let frostNoveMouseY = mouseY;
+    let frostNovaMouseY = mouseY;
     
     console.log('Using Frost Nova');
 
@@ -432,8 +432,8 @@ function frostNova(event) {
         document.querySelectorAll('.enemy').forEach(enemy => {
             const enemyRect = enemy.getBoundingClientRect();
             const distance = Math.sqrt(
-                Math.pow(enemyRect.left + enemyRect.width / 2 - mouseX, 2) +
-                Math.pow(enemyRect.top + enemyRect.height / 2 - mouseY, 2)
+                Math.pow(enemyRect.left + enemyRect.width / 2 - frostNovaMouseX, 2) +
+                Math.pow(enemyRect.top + enemyRect.height / 2 - frostNovaMouseY, 2)
             );
 
             if (distance <= radius) {
@@ -447,8 +447,8 @@ function frostNova(event) {
         document.querySelectorAll('.boss').forEach(boss => {
             const bossRect = boss.getBoundingClientRect();
             const distance = Math.sqrt(
-                Math.pow(bossRect.left + bossRect.width / 2 - mouseX, 2) +
-                Math.pow(bossRect.top + bossRect.height / 2 - mouseY, 2)
+                Math.pow(bossRect.left + bossRect.width / 2 - frostNovaMouseX, 2) +
+                Math.pow(bossRect.top + bossRect.height / 2 - frostNovaMouseY, 2)
             );
 
             if (distance <= radius) {
@@ -463,6 +463,7 @@ function frostNova(event) {
         }
     }, intervalDuration);
 }
+
 
 function chillingAura() {
     let aura = document.querySelector('.chillingAura');
