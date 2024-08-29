@@ -190,15 +190,15 @@ function handleCraftingItemClick(recipeId) {
 
     if (canCraft) {
         button.onclick = () => {
-            // Deduct materials from inventory
+            
             recipe.materials.forEach(material => {
                 inventory[material.name] -= material.required;
             });
     
-            // Save updated inventory back to localStorage
+            
             localStorage.setItem('inventory', JSON.stringify(inventory));
     
-            // Append the crafted character to ownedCharacters in localStorage
+            
             let ownedCharacters = JSON.parse(localStorage.getItem('ownedCharacters')) || [];
             ownedCharacters.push(recipe.character.name);
             localStorage.setItem('ownedCharacters', JSON.stringify(ownedCharacters));
@@ -268,7 +268,7 @@ function populateCharacterItems() {
         item.appendChild(itemText);
         item.appendChild(itemImage);
 
-        // Check if the character is owned and add an indicator if true
+        
         if (ownedCharacters.includes(character.name)) {
             const ownedIndicator = document.createElement('span');
             ownedIndicator.textContent = '✔ Owned';

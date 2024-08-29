@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     const keysPressed = {};
 
-    // Ability UI Elements
+    
     const abilityUIElements = {
         ability1: document.getElementById('cooldown1'),
         ability2: document.getElementById('cooldown2'),
@@ -170,10 +170,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const rightEdge = (nodeLeft + 6) / 100 * screenWidth + tooltipWidth;
     
             if (rightEdge > screenWidth) {
-                // Position the tooltip to the left of the dungeon node
+                
                 tooltip.style.left = `${nodeLeft - tooltipWidth / screenWidth * 100 - 1}vw`;
             } else {
-                // Position the tooltip to the right of the dungeon node
+                
                 tooltip.style.left = `${nodeLeft + 6}vw`;
             }
         });
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.body.appendChild(dungeonNode);
     }
     
-    // Usage example with viewport units
+    
     createDungeonNode('New Beginnings', 25, 5, '1 min', 'newBeginnings');
     createDungeonNode('Ancient Ruins', 47, 5, '30 mins', 'ancientRuins');
     createDungeonNode('Haunted Forest', 69, 5, '25 mins', 'hauntedForest');

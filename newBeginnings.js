@@ -1,9 +1,6 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-
     let mouseX, mouseY;
-
     const isFirstTime = !localStorage.getItem('firstTimePlayed');
 
     if (isFirstTime) {
@@ -60,11 +57,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.getElementById('close-tutorial').addEventListener('click', () => {
             localStorage.setItem('firstTimePlayed', 'true');
             overlay.remove();
-            startGame(); // Start the game after the tutorial is dismissed
+            startGame();
         });
     }
 
-    // Capture the mouse position
     document.addEventListener('mousemove', (event) => {
         mouseX = event.clientX;
         mouseY = event.clientY;
@@ -72,12 +68,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     const player = document.getElementById('player');
     const moveAmount = 5;
-    let playerHealth = 100; // Initial health
-
+    let playerHealth = 100;
     const keysPressed = {};
 
-
-    // Setting the vulgarian and ability icons
     function setPlayerImage(vulgarian) {
         switch (vulgarian) {
             case 'Ember':
@@ -161,7 +154,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
             horizontalMove += moveAmount;
         }
 
-        // Normalize diagonal movement
         if (verticalMove !== 0 && horizontalMove !== 0) {
             verticalMove *= Math.sqrt(0.5);
             horizontalMove *= Math.sqrt(0.5);
@@ -187,9 +179,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
         enemy.className = 'enemy';
         enemy.style.top = `${top}px`;
         enemy.style.left = `${left}px`;
-        enemy.dataset.type = type; // Store enemy type in dataset for drops
-        enemy.style.backgroundImage = 'url("https://lh3.googleusercontent.com/d/16IkZCYSnwFIjSKp51rP7qRFahjtjKQjp")'; // Correct URL format
-        enemy.style.backgroundSize = 'cover'; // Ensures the image covers the div
+        enemy.dataset.type = type;
+        enemy.style.backgroundImage = 'url("https://lh3.googleusercontent.com/d/16IkZCYSnwFIjSKp51rP7qRFahjtjKQjp")';
+        enemy.style.backgroundSize = 'cover';
         document.body.appendChild(enemy);
 
         const speed = 2;
@@ -197,16 +189,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
         let directionY = Math.random() < 0.5 ? 1 : -1;
 
         function moveEnemy() {
-            if (!document.body.contains(enemy)) return; // Stop movement if the enemy is removed
+            if (!document.body.contains(enemy)) return;
 
             let enemyTop = parseFloat(enemy.style.top);
             let enemyLeft = parseFloat(enemy.style.left);
 
-            // Randomly move the enemy
-            enemyTop += directionY * speed; // move up or down
-            enemyLeft += directionX * speed; // move left or right
+            enemyTop += directionY * speed;
+            enemyLeft += directionX * speed;
 
-            // Check bounds and change direction if necessary
             if (enemyTop <= 0 || enemyTop >= window.innerHeight - enemy.clientHeight) {
                 directionY *= -1;
             }
@@ -221,7 +211,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
 
         function shootPlayer() {
-            if (!document.body.contains(enemy)) return; // Stop shooting if the enemy is removed
+            if (!document.body.contains(enemy)) return;
 
             const playerRect = player.getBoundingClientRect();
             const playerCenterX = playerRect.left + playerRect.width / 2;
@@ -240,7 +230,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             document.body.appendChild(bullet);
 
             const bulletSpeed = 10;
-            const bulletDamage = 5; // Reduced bullet damage
+            const bulletDamage = 5;
 
             function moveBullet() {
                 let bulletTop = parseFloat(bullet.style.top);
@@ -252,7 +242,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 bullet.style.top = `${bulletTop}px`;
                 bullet.style.left = `${bulletLeft}px`;
 
-                // Check for collision with player
                 const playerRect = player.getBoundingClientRect();
                 if (bulletTop >= playerRect.top && bulletTop <= playerRect.bottom &&
                     bulletLeft >= playerRect.left && bulletLeft <= playerRect.right) {
@@ -272,7 +261,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
 
         requestAnimationFrame(moveEnemy);
-        setInterval(shootPlayer, 3000); // Enemies shoot every 3 seconds
+        setInterval(shootPlayer, 3000);
     }
 
     function spawnWave(enemyCount) {
@@ -291,12 +280,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
         boss.style.position = 'absolute';
         boss.style.top = `${top}px`;
         boss.style.left = `${left}px`;
-        boss.style.width = '100px'; // Boss size to make it visible
+        boss.style.width = '100px';
         boss.style.height = '100px';
-        boss.style.backgroundImage = 'url("https://lh3.googleusercontent.com/d/1uM2rvMfFQ0v7GnvAqj00M-f9QzxHiK1S")'; // Correct URL format
-        boss.style.backgroundSize = 'cover'; // Ensures the image covers the div
+        boss.style.backgroundImage = 'url("https://lh3.googleusercontent.com/d/1uM2rvMfFQ0v7GnvAqj00M-f9QzxHiK1S")';
+        boss.style.backgroundSize = 'cover';
 
-        // Create the health bar container and health bar (same as before)
         const healthBarContainer = document.createElement('div');
         const healthBar = document.createElement('div');
         healthBarContainer.className = 'boss-health-bar-container';
@@ -358,7 +346,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const bulletDamage = 20;
 
             function moveBullet() {
-                if (!document.body.contains(bullet)) return;  // Stop movement if the bullet is removed
+                if (!document.body.contains(bullet)) return;
 
                 let bulletTop = parseFloat(bullet.style.top);
                 let bulletLeft = parseFloat(bullet.style.left);
@@ -369,16 +357,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 bullet.style.top = `${bulletTop}px`;
                 bullet.style.left = `${bulletLeft}px`;
 
-                // Check for collision with player
                 const playerRect = player.getBoundingClientRect();
                 if (bulletTop >= playerRect.top && bulletTop <= playerRect.bottom &&
                     bulletLeft >= playerRect.left && bulletLeft <= playerRect.right) {
                     decreasePlayerHealth(bulletDamage);
-                    bullet.remove();  // Remove bullet immediately after it hits the player
+                    bullet.remove();
                     return;
                 }
 
-                // Remove bullet if it leaves the screen
                 if (bulletTop < 0 || bulletTop > window.innerHeight || bulletLeft < 0 || bulletLeft > window.innerWidth) {
                     bullet.remove();
                 } else {
@@ -415,30 +401,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         };
 
-
         moveBoss();
-        setInterval(shootPlayer, 1000);  // Boss shoots every 1 second
+        setInterval(shootPlayer, 1000);
     }
 
     function startGame() {
         let wave = 1;
-        let bossCreated = false; // Track if the boss has been created
+        let bossCreated = false;
 
         function nextWave() {
             if (wave <= 2) {
-                const enemyCount = wave; // Adjust the number of enemies for each wave
-                spawnWave(enemyCount); // Spawn the correct number of enemies
+                const enemyCount = wave;
+                spawnWave(enemyCount);
                 wave++;
             } else if (wave === 3 && !bossCreated) {
-                createBoss(); // Spawn the boss after two waves
-                bossCreated = true; // Mark the boss as created
+                createBoss();
+                bossCreated = true;
             }
         }
 
-        // Start the first wave
         nextWave();
 
-        // Move to next wave or boss after the current wave is cleared
         const waveCheckInterval = setInterval(() => {
             const enemiesLeft = document.querySelectorAll('.enemy').length;
             const bossExists = document.querySelectorAll('.boss').length > 0;
@@ -447,27 +430,25 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 if (wave <= 3) {
                     nextWave();
                 } else {
-                    clearInterval(waveCheckInterval); // Stop checking after the boss wave
+                    clearInterval(waveCheckInterval);
                 }
             }
-        }, 1000); // Check every second if the wave is cleared
+        }, 1000);
     }
 
-    // Function to update the health bar
     function updateHealthBar() {
         const healthBar = document.getElementById('health-bar');
         healthBar.style.width = `${playerHealth}%`;
 
         if (playerHealth > 60) {
-            healthBar.style.backgroundColor = '#4caf50'; // Green
+            healthBar.style.backgroundColor = '#4caf50';
         } else if (playerHealth > 30) {
-            healthBar.style.backgroundColor = '#ffeb3b'; // Yellow
+            healthBar.style.backgroundColor = '#ffeb3b';
         } else {
-            healthBar.style.backgroundColor = '#f44336'; // Red
+            healthBar.style.backgroundColor = '#f44336';
         }
     }
 
-    // Example function to decrease player health
     function decreasePlayerHealth(amount) {
         playerHealth = Math.max(0, playerHealth - amount);
         updateHealthBar();
@@ -482,14 +463,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
-    // Start the animation loop
     requestAnimationFrame(movePlayer);
-
-    // Update the health bar initially
     updateHealthBar();
 
-    // Start the game with waves and boss
     if (!isFirstTime) {
-        startGame(); // Start the game immediately if it's not the first time
+        startGame();
     }
 });
