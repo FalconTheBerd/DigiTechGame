@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Item - Game Store</title>
+    <link rel="stylesheet" href="buyItem.css">
+</head>
+<body>
+    <div id="paypal-container">
+    </div>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=BAAsS5-Zd3tvayGKI5KlWA3pmuhZuuWocojKo7dIh5BPZfws48qdp0xm43KBQ1dUvG_kIjdjnk9lkfXAeU&components=hosted-buttons&disable-funding=venmo&currency=AUD"></script>
+    <script>
+        const buttonData = {
+            1: "BZQ8R729DSJUU",
+            2: "9A23D4K5L6MJ7", 
+
+        };
+
+        function getURLParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        const itemId = getURLParameter('id');
+        const hostedButtonId = buttonData[itemId];
+
+        if (hostedButtonId) {
+            paypal.HostedButtons({
+                hostedButtonId: hostedButtonId,
+            }).render("#paypal-container");
+        } else {
+            document.getElementById('paypal-container').innerHTML = '<p>Item not found.</p>';
+        }
+    </script>
+</body>
+</html>

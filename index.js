@@ -38,10 +38,10 @@ const craftingRecipes = [
         id: 1,
         character: { name: 'Frostbite', image: 'placeholder.png' },
         materials: [
-            { name: 'Gold', required: 50 },
+            { name: 'Gold', required: 100 },
             { name: 'Ice Heart', required: 1 },
-            { name: 'Exo Suit Part', required: 5 },
-            { name: 'Temperature Stabiliser', required: 1 }
+            { name: 'Exo Suit Part', required: 15 },
+            { name: 'Temperature Stabiliser', required: 10 }
         ]
     },
     {
@@ -120,7 +120,7 @@ function handleShopItemClick(itemId) {
 
     switch (itemId) {
         case 1:
-            alert('Item 1 selected');
+            window.location.href = "buyItem.html?id=" + encodeURIComponent(itemId);
             break;
         case 2:
             alert('Item 2 selected');

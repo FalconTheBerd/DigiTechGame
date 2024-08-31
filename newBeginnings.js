@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             bullet.style.left = `${enemyCenterX}px`;
             document.body.appendChild(bullet);
 
-            const bulletSpeed = 10;
+            const bulletSpeed = 7;
             const bulletDamage = 5;
 
             function moveBullet() {
@@ -411,7 +411,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         function nextWave() {
             if (wave <= 2) {
-                const enemyCount = wave;
+                const enemyCount = wave * 4;
                 spawnWave(enemyCount);
                 wave++;
             } else if (wave === 3 && !bossCreated) {
